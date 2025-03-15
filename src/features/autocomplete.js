@@ -1,7 +1,6 @@
 import SessionManager from '../core/session-manager.js';
 import ObjectNavigator from './object-navigator.js';
 import ProfileNavigator from './profile-navigator.js';
-import {debounce} from '../utils/debounce.js';
 
 class AutocompleteManager {
 	constructor(inputElement, dropdownElement) {
@@ -62,6 +61,7 @@ class AutocompleteManager {
 			}
 		} catch (error) {
 			console.error('Autocomplete error:', error);
+			document.getElementById('error').textContent = error.message;
 			this.resetAutocomplete();
 		}
 	}
@@ -152,7 +152,7 @@ class AutocompleteManager {
 				this.inputElement.value = `${obj.apiName}.${action.code}`;
 				this.dropdownElement.style.display = 'none';
 				this.resetAutocomplete();
-				this.navigateToObject(obj.apiName, action.code);
+				ObjectNavigator.navigateToObjectConfiguration(obj.apiName, action.code);
 			});
 
 			this.dropdownElement.appendChild(actionEl);
@@ -349,93 +349,13 @@ class AutocompleteManager {
 				this.inputElement.value = `Profiles.${profile.name}.${action.code}`;
 				this.dropdownElement.style.display = 'none';
 				this.resetAutocomplete();
-				this.navigateToProfile(profile.id, action.code);
+				ProfileNavigator.navigateToProfile(profile.id, action.code);
 			});
 
 			this.dropdownElement.appendChild(actionEl);
 		});
 
 		this.dropdownElement.style.display = 'block';
-	}
-
-	// Enhanced navigation method
-	async navigateToProfile(profileName, action) {
-		try {
-			const tabs = await new Promise(resolve => chrome.tabs.query({active: true, currentWindow: true}, resolve));
-			const currentUrl = tabs[0].url;
-
-			// Base Salesforce setup URL
-			const baseUrl = currentUrl.split('/setup/')[0];
-
-			let navigateUrl;
-			switch (action.toLowerCase()) {
-				case 'apps':
-					navigateUrl = `${baseUrl}/setup/manage/users/ProfileAppVisibility.apexp?id=${profileName}`;
-					break;
-				case 'connectedapps':
-					navigateUrl = `${baseUrl}/setup/manage/connectedapps/profileconnectedappvisibility.apexp?id=${profileName}`;
-					break;
-				case 'objects':
-					navigateUrl = `${baseUrl}/setup/EnhancedProfiles/page?address=%2F${profileName}%3Fs%3DObjectsAndTabs`;
-					break;
-				case 'apppermissions':
-					navigateUrl = `${baseUrl}/setup/manage/profileAppPermissions.apexp?id=${profileName}`;
-					break;
-				case 'apexaccess':
-					navigateUrl = `${baseUrl}/setup/manage/profileApexClassAccess.apexp?id=${profileName}`;
-					break;
-				case 'visualforceaccess':
-					navigateUrl = `${baseUrl}/setup/manage/profileVisualforcePageAccess.apexp?id=${profileName}`;
-					break;
-				case 'externaldatasource':
-					navigateUrl = `${baseUrl}/setup/manage/profileExternalDataSourceAccess.apexp?id=${profileName}`;
-					break;
-				case 'namedcredential':
-					navigateUrl = `${baseUrl}/setup/manage/profileNamedCredentialAccess.apexp?id=${profileName}`;
-					break;
-				case 'externalcredential':
-					navigateUrl = `${baseUrl}/setup/manage/profileExternalCredentialPrincipalAccess.apexp?id=${profileName}`;
-					break;
-				case 'flowaccess':
-					navigateUrl = `${baseUrl}/setup/manage/profileFlowAccess.apexp?id=${profileName}`;
-					break;
-				case 'custompermissions':
-					navigateUrl = `${baseUrl}/setup/manage/profileCustomPermissions.apexp?id=${profileName}`;
-					break;
-				case 'custommetadata':
-					navigateUrl = `${baseUrl}/setup/manage/profileCustomMetadataTypeAccess.apexp?id=${profileName}`;
-					break;
-				case 'customsettings':
-					navigateUrl = `${baseUrl}/setup/manage/profileCustomSettingAccess.apexp?id=${profileName}`;
-					break;
-				default:
-					// Fallback to profile details
-					navigateUrl = `${baseUrl}/setup/EnhancedProfiles/page?address=%2F${profileName}`;
-					
-			}
-
-			// Open in new tab
-			chrome.tabs.create({url: navigateUrl});
-		} catch (error) {
-			console.error('Profile navigation error', error);
-		}
-	}
-
-	async navigateToObject(objectName, action) {
-		try {
-            const tabs = await new Promise(resolve => 
-                chrome.tabs.query({active: true, currentWindow: true}, resolve)
-            );
-            const currentUrl = tabs[0].url;
-
-            // Construct navigation URL logic here
-            const baseUrl = currentUrl.split('/setup/')[0];
-            const navigateUrl = `${baseUrl}/setup/ObjectManager/${objectName}/${action}/view`;
-            console.log('[OBJECT] Navigate URL:', navigateUrl);
-            chrome.tabs.create({url: navigateUrl});
-        } catch (error) {
-            ErrorHandler.handle(error, 'Object Navigation Error');
-        }
 	}
 }
 

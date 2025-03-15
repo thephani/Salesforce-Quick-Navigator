@@ -1,12 +1,11 @@
 import AutocompleteManager from './src/features/autocomplete.js';
 import ObjectNavigator from './src/features/object-navigator.js';
+import DomainValidator from './src/utils/domain-validator.js';
 import ErrorHandler from './src/utils/error-handler.js';
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
 	const objectInput = document.getElementById('objectInput');
 	const autocompleteDropdown = document.getElementById('autocompleteDropdown');
-	const navigateBtn = document.getElementById('navigateBtn');
-	const errorDiv = document.getElementById('error');
 
 	// Initialize Autocomplete
 
@@ -15,28 +14,36 @@ document.addEventListener('DOMContentLoaded', () => {
 	// Setup event listeners
 	objectInput.addEventListener('input', e => autocompleteManager.handleAutocomplete(e));
 
-	// Setup navigation
-	// autocompleteManager.setupNavigationListener();
+	const container = document.querySelector('.container');
+    const notSalesforceMessage = document.getElementById('not-salesforce-message');
 
-	// Navigation Event Listener
-	navigateBtn.addEventListener('click', async () => {
-		try {
-			// Validate input
-			const input = objectInput.value.trim();
-			console.log('[NAVIGATION] Input:', input);
-			const parts = input.split('.');
+    try {
+        // Check if on Salesforce domain
+        const isSalesforceDomain = await DomainValidator.isOnSalesforceDomain();
 
-			if (parts.length !== 2) {
-				errorDiv.textContent = 'Invalid input format';
-				errorDiv.style.display = 'block';
-				return;
-			}
-
-			const [inputType, inputValue] = parts;
-			// Object configuration navigation
-			await ObjectNavigator.navigateToObjectConfiguration(inputType, inputValue);
-		} catch (error) {
-			ErrorHandler.handle(error, 'Navigation Error');
-		}
-	});
+        if (!isSalesforceDomain) {
+            // Hide main container
+            container.style.display = 'none';
+            
+            // Show "not on Salesforce" message
+            notSalesforceMessage.style.display = 'block';
+        } else {
+            // Normal initialization of extension
+            initializeExtension();
+        }
+    } catch (error) {
+        console.error('Domain validation error', error);
+    }
 });
+
+function initializeExtension() {
+    // Your existing extension initialization code
+    const objectInput = document.getElementById('objectInput');
+    const autocompleteDropdown = document.getElementById('autocompleteDropdown');
+    
+    // Existing initialization logic
+    const autocompleteManager = new AdvancedAutocompleteManager(
+        objectInput, 
+        autocompleteDropdown
+    );
+}

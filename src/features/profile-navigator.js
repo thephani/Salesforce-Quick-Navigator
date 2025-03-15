@@ -35,26 +35,66 @@ class ProfileNavigator {
      * Navigate to profile details or management page
      * @param {string} profileName - Name of the profile
      */
-    static async navigateToProfile(profileName) {
-        try {
-            // Retrieve current Salesforce session and active tab
-            await SessionManager.retrieveSession();
+	static async navigateToProfile(profileName, action) {
+		try {
+			const tabs = await new Promise(resolve => chrome.tabs.query({active: true, currentWindow: true}, resolve));
+			const currentUrl = tabs[0].url;
 
-            const tabs = await new Promise(resolve => 
-                chrome.tabs.query({active: true, currentWindow: true}, resolve)
-            );
-            const currentUrl = tabs[0].url;
+			// Base Salesforce setup URL
+			const baseUrl = currentUrl.split('/setup/')[0];
 
-            // Construct profile management URL
-            const baseUrl = currentUrl.split('/setup/')[0];
-            const profileNavigateUrl = `${baseUrl}/setup/manage/users/ProfileDetail.apexp?id=${profileName}`;
-            console.log('[PROFILE] Navigate URL:', profileNavigateUrl);
-            // Open profile in new tab
-            chrome.tabs.create({url: profileNavigateUrl});
-        } catch (error) {
-            ErrorHandler.handle(error, 'Profile Navigation Error');
-        }
-    }
+			let navigateUrl;
+			switch (action.toLowerCase()) {
+				case 'apps':
+					navigateUrl = `${baseUrl}/setup/manage/users/ProfileAppVisibility.apexp?id=${profileName}`;
+					break;
+				case 'connectedapps':
+					navigateUrl = `${baseUrl}/setup/manage/connectedapps/profileconnectedappvisibility.apexp?id=${profileName}`;
+					break;
+				case 'objects':
+					navigateUrl = `${baseUrl}/setup/EnhancedProfiles/page?address=%2F${profileName}%3Fs%3DObjectsAndTabs`;
+					break;
+				case 'apppermissions':
+					navigateUrl = `${baseUrl}/setup/manage/profileAppPermissions.apexp?id=${profileName}`;
+					break;
+				case 'apexaccess':
+					navigateUrl = `${baseUrl}/setup/manage/profileApexClassAccess.apexp?id=${profileName}`;
+					break;
+				case 'visualforceaccess':
+					navigateUrl = `${baseUrl}/setup/manage/profileVisualforcePageAccess.apexp?id=${profileName}`;
+					break;
+				case 'externaldatasource':
+					navigateUrl = `${baseUrl}/setup/manage/profileExternalDataSourceAccess.apexp?id=${profileName}`;
+					break;
+				case 'namedcredential':
+					navigateUrl = `${baseUrl}/setup/manage/profileNamedCredentialAccess.apexp?id=${profileName}`;
+					break;
+				case 'externalcredential':
+					navigateUrl = `${baseUrl}/setup/manage/profileExternalCredentialPrincipalAccess.apexp?id=${profileName}`;
+					break;
+				case 'flowaccess':
+					navigateUrl = `${baseUrl}/setup/manage/profileFlowAccess.apexp?id=${profileName}`;
+					break;
+				case 'custompermissions':
+					navigateUrl = `${baseUrl}/setup/manage/profileCustomPermissions.apexp?id=${profileName}`;
+					break;
+				case 'custommetadata':
+					navigateUrl = `${baseUrl}/setup/manage/profileCustomMetadataTypeAccess.apexp?id=${profileName}`;
+					break;
+				case 'customsettings':
+					navigateUrl = `${baseUrl}/setup/manage/profileCustomSettingAccess.apexp?id=${profileName}`;
+					break;
+				default:
+					// Fallback to profile details
+					navigateUrl = `${baseUrl}/setup/EnhancedProfiles/page?address=%2F${profileName}`;
+			}
+
+			// Open in new tab
+			chrome.tabs.create({url: navigateUrl});
+		} catch (error) {
+			console.error('Profile navigation error', error);
+		}
+	}
 
     /**
      * Get detailed profile permissions

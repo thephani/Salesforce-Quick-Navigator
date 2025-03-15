@@ -195,3 +195,39 @@ body {
     color: var(--secondary-color);
     font-size: 0.8rem;
 }
+
+.not-salesforce-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    padding: 20px;
+    text-align: center;
+    background-color: #f4f4f4;
+}
+
+.message-content {
+    background-color: white;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    max-width: 300px;
+}
+
+.message-content h2 {
+    color: #e74c3c;
+    margin-bottom: 15px;
+}
+
+.domain-list ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.domain-list li {
+    background-color: #f8f9fa;
+    margin: 5px 0;
+    padding: 8px;
+    border-radius: 6px;
+    color: #495057;
+}
