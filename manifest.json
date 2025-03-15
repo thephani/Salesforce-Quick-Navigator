@@ -1,0 +1,31 @@
+{
+  "manifest_version": 3,
+  "name": "Salesforce Quick Navigator",
+  "version": "1.0.0",
+  "description": "Salesforce Quick Nav is a productivity extension that simplifies Object navigation with fast, shorthand commands like Emmet.",
+  "permissions": [
+    "activeTab",
+    "https://*.salesforce.com/*",
+    "https://*.lightning.force.com/*",
+    "https://*.my.salesforce.com/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["https://*.salesforce.com/*"],
+      "css": ["styles.css"]
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_icon": {
+      "16": "assets/icon16.png",
+      "48": "assets/icon48.png",
+      "128": "assets/icon128.png"
+    }
+  },
+  "icons": {
+    "16": "assets/icon16.png",
+    "48": "assets/icon48.png",
+    "128": "assets/icon128.png"
+  }
+}

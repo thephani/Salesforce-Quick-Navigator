@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Salesforce Quick Nav</title>
+	<link rel="stylesheet" type="text/css" href="./styles.css">
+	</head>
+	<body>
+		<div class="input-container">
+			<div class="autocomplete-container">
+				<input type="text" id="objectInput" placeholder="E.g contact.fields, obj__c.fields" />
+				<div id="autocompleteDropdown" class="autocomplete-dropdown" style="display: none"></div>
+			</div>
+			<button id="navigateBtn">Navigate</button>
+			<div id="error">Invalid input or not in Salesforce setup</div>
+		</div>
+
+		<div class="command-section">
+			<div class="command-title">Available Actions:</div>
+			<div id="availableActions" class="command-list">
+				<!-- Basic Object Configuration -->
+				<span class="command-item" data-command="d">d (Details)</span>
+				<span class="command-item" data-command="f">f (Fields)</span>
+				<span class="command-item" data-command="pl">pl (Page Layouts)</span>
+				<span class="command-item" data-command="lr">lr (Record Pages)</span>
+
+				<!-- Buttons and Interactions -->
+				<span class="command-item" data-command="bla">bla (Buttons & Actions)</span>
+				<span class="command-item" data-command="cl">cl (Compact Layouts)</span>
+				<span class="command-item" data-command="fs">fs (Field Sets)</span>
+
+				<!-- Validation and Rules -->
+				<span class="command-item" data-command="vr">vr (Validation Rules)</span>
+				<span class="command-item" data-command="rt">rt (Record Types)</span>
+				<span class="command-item" data-command="rlf">rlf (Lookup Filters)</span>
+
+				<!-- Layout and Visibility -->
+				<span class="command-item" data-command="sl">sl (Search Layouts)</span>
+				<span class="command-item" data-command="lvbl">lvbl (List View Buttons)</span>
+				<span class="command-item" data-command="hc">hc (Hierarchy Columns)</span>
+
+				<!-- Access and Triggers -->
+				<span class="command-item" data-command="oa">oa (Object Access)</span>
+				<span class="command-item" data-command="t">t (Triggers)</span>
+				<span class="command-item" data-command="ft">ft (Flow Triggers)</span>
+
+				<!-- Additional Configurations -->
+				<span class="command-item" data-command="ol">ol (Object Limits)</span>
+				<span class="command-item" data-command="cff">cff (Conditional Formatting)</span>
+			</div>
+		</div>
+        <script src="./autocomplete.js"></script>
+		<script src="./popus.js"></script>
+	</body>
+</html>
