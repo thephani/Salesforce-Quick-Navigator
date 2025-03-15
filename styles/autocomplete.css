@@ -16,11 +16,32 @@
 }
 
 .autocomplete-item {
-    padding: 8px;
-    cursor: pointer;
-    transition: background-color 0.2s;
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+}
+
+.action-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.action-header strong {
+    color: var(--primary-color);
+    font-size: 0.9rem;
+}
+
+.action-description small {
+    color: var(--secondary-color);
+    font-size: 0.7rem;
+}
+
+.autocomplete-item:last-child {
+    border-bottom: none;
 }
 
 .autocomplete-item:hover {
-    background-color: #f0f0f0;
+    background-color: rgba(74, 144, 226, 0.05);
 }
