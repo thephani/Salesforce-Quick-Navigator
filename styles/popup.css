@@ -231,3 +231,38 @@ body {
     border-radius: 6px;
     color: #495057;
 }
+/* footer styles */
+.extension-footer {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: var(--background-color);
+    padding: 10px 15px;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    font-size: 0.8rem;
+}
+
+.footer-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.copyright {
+    color: var(--secondary-color);
+}
+
+.feedback-link a {
+    color: var(--primary-color);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    transition: color 0.3s ease;
+}
+
+.feedback-link a:hover {
+    color: var(--accent-color);
+    text-decoration: underline;
+}

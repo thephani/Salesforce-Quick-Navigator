@@ -1,5 +1,3 @@
-// src/features/profile-navigator.js
-
 import SalesforceApiService from '../core/api-service.js';
 import SessionManager from '../core/session-manager.js';
 import ErrorHandler from '../utils/error-handler.js';
@@ -44,53 +42,8 @@ class ProfileNavigator {
 			// Base Salesforce setup URL
 			const baseUrl = currentUrl.split('/setup/')[0];
 
-			let navigateUrl;
-			switch (action.toLowerCase()) {
-				case 'apps':
-					navigateUrl = `${baseUrl}/setup/manage/users/ProfileAppVisibility.apexp?id=${profileName}`;
-					break;
-				case 'connectedapps':
-					navigateUrl = `${baseUrl}/setup/manage/connectedapps/profileconnectedappvisibility.apexp?id=${profileName}`;
-					break;
-				case 'objects':
-					navigateUrl = `${baseUrl}/setup/EnhancedProfiles/page?address=%2F${profileName}%3Fs%3DObjectsAndTabs`;
-					break;
-				case 'apppermissions':
-					navigateUrl = `${baseUrl}/setup/manage/profileAppPermissions.apexp?id=${profileName}`;
-					break;
-				case 'apexaccess':
-					navigateUrl = `${baseUrl}/setup/manage/profileApexClassAccess.apexp?id=${profileName}`;
-					break;
-				case 'visualforceaccess':
-					navigateUrl = `${baseUrl}/setup/manage/profileVisualforcePageAccess.apexp?id=${profileName}`;
-					break;
-				case 'externaldatasource':
-					navigateUrl = `${baseUrl}/setup/manage/profileExternalDataSourceAccess.apexp?id=${profileName}`;
-					break;
-				case 'namedcredential':
-					navigateUrl = `${baseUrl}/setup/manage/profileNamedCredentialAccess.apexp?id=${profileName}`;
-					break;
-				case 'externalcredential':
-					navigateUrl = `${baseUrl}/setup/manage/profileExternalCredentialPrincipalAccess.apexp?id=${profileName}`;
-					break;
-				case 'flowaccess':
-					navigateUrl = `${baseUrl}/setup/manage/profileFlowAccess.apexp?id=${profileName}`;
-					break;
-				case 'custompermissions':
-					navigateUrl = `${baseUrl}/setup/manage/profileCustomPermissions.apexp?id=${profileName}`;
-					break;
-				case 'custommetadata':
-					navigateUrl = `${baseUrl}/setup/manage/profileCustomMetadataTypeAccess.apexp?id=${profileName}`;
-					break;
-				case 'customsettings':
-					navigateUrl = `${baseUrl}/setup/manage/profileCustomSettingAccess.apexp?id=${profileName}`;
-					break;
-				default:
-					// Fallback to profile details
-					navigateUrl = `${baseUrl}/setup/EnhancedProfiles/page?address=%2F${profileName}`;
-			}
-
 			// Open in new tab
+			let navigateUrl = `${baseUrl}/setup/EnhancedProfiles/page?address=%2F${profileName}%3Fs%3D${action}`;
 			chrome.tabs.create({url: navigateUrl});
 		} catch (error) {
 			console.error('Profile navigation error', error);

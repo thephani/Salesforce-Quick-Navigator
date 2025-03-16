@@ -1,14 +1,15 @@
 <!DOCTYPE html>
 <html>
 	<head>
+		<meta charset="UTF-8" />
 		<title>Salesforce Quick Nav</title>
 		<link rel="stylesheet" type="text/css" href="styles/popup.css" />
 		<link rel="stylesheet" type="text/css" href="styles/autocomplete.css" />
 	</head>
 	<body>
-		<div id="not-salesforce-message" class="not-salesforce-container" style="display: none;">
+		<div id="not-salesforce-message" class="not-salesforce-container" style="display: none">
 			<div class="message-content">
-				<h2>Salesforce Only</h2>
+				<h2>🚫 Salesforce Only 🚫</h2>
 				<p>This extension works only on Salesforce domains.</p>
 				<div class="domain-list">
 					<p>Supported Domains:</p>
@@ -21,7 +22,7 @@
 				</div>
 			</div>
 		</div>
-	
+
 		<div class="container fade-in">
 			<div class="header">
 				<h1>Salesforce Quick Nav</h1>
@@ -35,9 +36,8 @@
 
 				<!-- <button id="navigateBtn" class="navigate-btn">Navigate</button> -->
 			</div>
-			
 
-			<div id="error" class="error-message" style="display: none;"></div>
+			<div id="error" class="error-message" style="display: none"></div>
 
 			<div class="command-section">
 				<div class="command-title">Quick Actions:</div>
@@ -72,6 +72,18 @@
 				</div>
 			</div>
 		</div>
+
+		<!-- Footer Section -->
+		<footer class="extension-footer">
+			<div class="footer-content">
+				<div class="copyright">© 2025 Phanidra Mangipudi. All Rights Reserved.</div>
+				<div class="feedback-link">
+					<a href="https://github.com/thephani/Salesforce-Quick-Navigator/issues" target="_blank" title="Provide Feedback or Report Issues"
+						>🐞 Feedback & Support 🐞 
+					</a>
+				</div>
+			</div>
+		</footer>
 
 		<!-- Module Scripts -->
 		<script type="module" src="src/core/session-manager.js"></script>
