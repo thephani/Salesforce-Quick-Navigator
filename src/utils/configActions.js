@@ -1,5 +1,5 @@
 export const PROFILE_ACTIONS = [
-	{code: 'default', name: 'Profile Overview', description: 'Profile configuration details'},
+	{code: '', name: 'Profile Overview', description: 'Profile configuration details'},
 	{code: 'AssignedApps', name: 'Assigned Apps', description: 'Apps visible in the app menu'},
 	{code: 'ConnectedApps', name: 'Assigned Connected Apps', description: 'Connected apps visible in the app menu'},
 	{code: 'ObjectsAndTabs', name: 'Object Settings', description: 'Permissions to access objects and fields'},
@@ -31,7 +31,7 @@ export const PROFILE_ACTIONS = [
 		description: 'Settings that control required session security level and timeout for inactive sessions',
 	},
 	{code: 'PasswordPolicies', name: 'Password Policies', description: 'Profile Based password policies'},
-	{code: 'DefaultExperience', name: 'Default Experience', description: 'Setting for assigning a default community to a user profile'},
+	{code: 'NetworkAffinity', name: 'Default Experience', description: 'Setting for assigning a default community to a user profile'},
 ];
 
 export const OBJECT_ACTIONS = {

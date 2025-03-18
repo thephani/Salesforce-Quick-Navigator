@@ -83,8 +83,9 @@ class ObjectNavigator {
 		actions.forEach(action => {
 			const actionEl = document.createElement('div');
 			actionEl.classList.add('autocomplete-item');
+			//  <strong>${action.code}: ${action.name}</strong>
 			actionEl.innerHTML = `
-                <strong>${action.code}: ${action.name}</strong>
+                <strong>${action.name}</strong>
                 <small>${action.description}</small>
             `;
 

@@ -266,3 +266,104 @@ body {
     color: var(--accent-color);
     text-decoration: underline;
 }
+.quick-guide {
+    background-color: rgba(74, 144, 226, 0.05);
+    border-radius: 12px;
+    padding: 15px;
+    margin-top: 15px;
+}
+
+.guide-sections {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.guide-section {
+    background-color: white;
+    border-radius: 10px;
+    padding: 15px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.guide-section h4 {
+    color: var(--primary-color);
+    margin-bottom: 10px;
+    font-size: 0.9rem;
+    border-bottom: 1px solid rgba(74, 144, 226, 0.1);
+    padding-bottom: 5px;
+}
+
+.guide-items {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+.guide-item {
+    display: flex;
+    flex-direction: column;
+    background-color: rgba(74, 144, 226, 0.05);
+    border-radius: 8px;
+    padding: 8px 12px;
+    width: calc(50% - 10px);
+    box-sizing: border-box;
+}
+
+.guide-code {
+    font-weight: 600;
+    color: var(--primary-color);
+    margin-bottom: 5px;
+    font-size: 0.9rem;
+}
+
+.guide-description {
+    color: var(--secondary-color);
+    font-size: 0.7rem;
+}
+
+@keyframes subtle-pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.02); }
+    100% { transform: scale(1); }
+}
+
+.guide-item {
+    will-change: transform, box-shadow;
+    backface-visibility: hidden;
+}
+
+.guide-item:hover {
+    animation: subtle-pulse 0.5s ease-in-out;
+}
+
+.guide-item {
+    cursor: pointer;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.guide-item:active {
+    transform: scale(0.95);
+    transition: transform 0.1s ease;
+}
+
+.guide-item {
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.guide-item:hover {
+    /* transform: translateY(-3px); */
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+/* Add slight gradient and depth */
+.guide-item {
+    background: linear-gradient(
+        to bottom right, 
+        rgba(74, 144, 226, 0.05), 
+        rgba(74, 144, 226, 0.02)
+    );
+    border: 1px solid rgba(74, 144, 226, 0.1);
+}

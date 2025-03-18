@@ -197,7 +197,7 @@ class ProfileNavigator {
 			actionEl.classList.add('autocomplete-item');
 			actionEl.innerHTML = `
 				<div class="action-header">
-					<strong>${action.code}: ${action.name}</strong>
+					<strong>${action.name}</strong>
 				</div>
 				<div class="action-description">
 					<small>${action.description}</small>

@@ -2,7 +2,7 @@
 <html>
 	<head>
 		<meta charset="UTF-8" />
-		<title>Salesforce Quick Nav</title>
+		<title>Salesforce Quick Navigator</title>
 		<link rel="stylesheet" type="text/css" href="styles/popup.css" />
 		<link rel="stylesheet" type="text/css" href="styles/autocomplete.css" />
 	</head>
@@ -25,12 +25,12 @@
 
 		<div class="container fade-in">
 			<div class="header">
-				<h1>Salesforce Quick Nav</h1>
+				<h1>Salesforce Quick Navigator</h1>
 			</div>
 
 			<div class="input-container slide-in">
 				<div class="autocomplete-container">
-					<input type="text" id="objectInput" placeholder="Profiles. or Objects." />
+					<input type="text" id="objectInput" placeholder="Type Profiles. or Objects." />
 					<div id="autocompleteDropdown" class="autocomplete-dropdown" style="display: none"></div>
 				</div>
 
@@ -38,48 +38,78 @@
 			</div>
 
 			<div id="error" class="error-message" style="display: none"></div>
-
-			<div class="command-section">
-				<div class="command-title">Quick Actions:</div>
-				<div id="availableActions" class="command-list">
-					<!-- Object Configuration -->
-					<div class="action-group">
-						<h3>Object Configuration</h3>
-						<div class="action-items">
-							<span class="command-item" data-command="d">Details</span>
-							<span class="command-item" data-command="f">Fields</span>
-							<span class="command-item" data-command="pl">Page Layouts</span>
+			<div class="quick-guide1">
+				<div class="guide-sections">
+					<div class="guide-section">
+						<h4>Basic Navigation</h4>
+						<div class="guide-items">
+							<div class="guide-item">
+								<span class="guide-code">objects.</span>
+								<span class="guide-description">List all objects</span>
+							</div>
+							<div class="guide-item">
+								<span class="guide-code">profiles.</span>
+								<span class="guide-description">List all profiles</span>
+							</div>
 						</div>
 					</div>
 
-					<!-- Validation -->
-					<div class="action-group">
-						<h3>Validation</h3>
-						<div class="action-items">
-							<span class="command-item" data-command="vr">Validation Rules</span>
-							<span class="command-item" data-command="rt">Record Types</span>
+					<div class="guide-section">
+						<h4>Object Actions</h4>
+						<div class="guide-items">
+							<div class="guide-item">
+								<span class="guide-code">Object Details</span>
+								<span class="guide-description">Objects.Account.Details</span>
+							</div>
+							<div class="guide-item">
+								<span class="guide-code">Fields & Details</span>
+								<span class="guide-description">Objects.Account.Fields</span>
+							</div>
+							<div class="guide-item">
+								<span class="guide-code">Page Layouts</span>
+								<span class="guide-description">Objects.Account.PageLayouts</span>
+							</div>
+							<div class="guide-item">
+								<span class="guide-code">Record Types</span>
+								<span class="guide-description">Objects.Account.RecordTypes</span>
+							</div>
 						</div>
 					</div>
 
-					<!-- Triggers -->
-					<div class="action-group">
-						<h3>Triggers</h3>
-						<div class="action-items">
-							<span class="command-item" data-command="t">Triggers</span>
-							<span class="command-item" data-command="ft">Flow Triggers</span>
+					<div class="guide-section">
+						<h4>Profile Actions</h4>
+						<div class="guide-items">
+							<div class="guide-item">
+								<span class="guide-code">Object Permissions</span>
+								<span class="guide-description">Profiles.Admin.Object Settings</span>
+							</div>
+							<div class="guide-item">
+								<span class="guide-code">System Permisssions</span>
+								<span class="guide-description">Objects.Account.SystemPerm</span>
+							</div>
+							<div class="guide-item">
+								<span class="guide-code">Apex Class Access</span>
+								<span class="guide-description">Objects.Account.Fields</span>
+							</div>
+							<div class="guide-item">
+								<span class="guide-code">Visualforce Access</span>
+								<span class="guide-description">Objects.Account.PageLayouts</span>
+							</div>
 						</div>
 					</div>
+
+					<br />
+					<br />
 				</div>
-			</div>
 		</div>
 
 		<!-- Footer Section -->
 		<footer class="extension-footer">
 			<div class="footer-content">
-				<div class="copyright">© 2025 Phanidra Mangipudi. All Rights Reserved.</div>
+				<div class="copyright">© 2025 Phanidra Mangipudi</div>
 				<div class="feedback-link">
 					<a href="https://github.com/thephani/Salesforce-Quick-Navigator/issues" target="_blank" title="Provide Feedback or Report Issues"
-						>🐞 Feedback & Support 🐞 
+						>🐞 Feedback & Support 🐞
 					</a>
 				</div>
 			</div>
