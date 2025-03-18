@@ -15,6 +15,7 @@ class BackgroundSessionManager {
 			// Try multiple domain variations
 			const cookieDomains = [
 				sfHost,
+				sfHost.replace('.lightning.force.com', '.salesforce.com'),
 				sfHost.replace('.my.salesforce-setup.com', '.salesforce.com'),
 				sfHost.replace('.salesforce-setup.com', '.salesforce.com'),
 			];
@@ -25,27 +26,21 @@ class BackgroundSessionManager {
 					return;
 				}
 
-				const currentDomain = domains[0];
-				chrome.cookies.get(
-					{
-						url: `https://${currentDomain}`,
-						name: 'sid',
-					},
-					sessionCookie => {
-						console.log('currentDomain: ', currentDomain, ' Session Cookie:', sessionCookie);
-						if (sessionCookie) {
-							resolve({
-								key: sessionCookie.value,
-								hostname: currentDomain,
-								fullHostname: sfHost,
-								expires: sessionCookie.expirationDate,
-							});
-						} else {
-							// Try next domain
-							tryNextDomain(domains.slice(1));
-						}
+				const currentDomain = domains[0].replace('.lightning.force.com', '.my.salesforce.com');
+				chrome.cookies.get({url: 'https://' + currentDomain, name: 'sid'}, sessionCookie => {
+					console.log('currentDomain: ', currentDomain, ' Session Cookie:', sessionCookie);
+					if (sessionCookie) {
+						resolve({
+							key: sessionCookie.value,
+							hostname: currentDomain,
+							fullHostname: sfHost,
+							expires: sessionCookie.expirationDate,
+						});
+					} else {
+						// Try next domain
+						tryNextDomain(domains.slice(1));
 					}
-				);
+				});
 			};
 
 			tryNextDomain(cookieDomains);

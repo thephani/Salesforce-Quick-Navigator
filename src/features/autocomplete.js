@@ -38,13 +38,10 @@ class AutocompleteManager {
 
 	async handleInitialAutocomplete(input) {
 		// Check for object-specific queries
-		console.log('Input:', input);
 		if (input.includes('objects.') || input.includes('object.')) {
 			const session = await SessionManager.retrieveSession();
 			const objects = await ObjectNavigator.queryAvailableObjects(session);
-			console.log('All Objects:', objects);
 			const modifiedInput = input.replace('objects.', '').replace('object.', '');
-			console.log('Modified Input:', modifiedInput);
 
 			// Filter objects
 			const filteredObjects = objects.filter(
@@ -57,7 +54,6 @@ class AutocompleteManager {
 			const profiles = await ProfileNavigator.queryAvailableProfiles(session);
 			console.log('All Profiles:', profiles);
 			const modifiedInput = input.replace('profiles.', '').replace('profile.', '');
-			console.log('Modified Input:', modifiedInput);
 
 			// Filter profiles
 			const filteredProfiles = profiles.filter(profile => profile.name.toLowerCase().includes(modifiedInput));
