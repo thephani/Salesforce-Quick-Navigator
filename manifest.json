@@ -2,12 +2,11 @@
   "manifest_version": 3,
   "name": "Salesforce Quick Navigator",
   "version": "2.0.0",
-  "description": "Salesforce Quick Nav is a productivity extension that simplifies Object, Profile navigation with fast, shorthand commands like Emmet.",
+  "description": "Salesforce Quick Nav is a productivity tool that simplifies Object, Profile navigation with fast, shorthand commands like Emmet.",
   "permissions": [
     "cookies",
     "tabs",
-    "storage",
-    "notifications"
+    "storage"
   ],
   "host_permissions": [
     "https://*.salesforce.com/",
