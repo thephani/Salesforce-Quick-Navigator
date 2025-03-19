@@ -36,6 +36,7 @@ export const PROFILE_ACTIONS = [
 
 export const OBJECT_ACTIONS = {
 	standard: [
+		{code: 'TAB', name: 'Records Tab', description: 'Navigate to Records Tab or List View'},
 		{code: 'Details', name: 'Details', description: 'Object Details'},
 		{code: 'FieldsAndRelationships', name: 'Fields', description: 'Fields & Relationships'},
 		{code: 'RecordTypes', name: 'Record Types', description: 'Object Record Types'},

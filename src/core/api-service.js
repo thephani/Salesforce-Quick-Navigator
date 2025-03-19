@@ -20,7 +20,7 @@ class SalesforceApiService {
 
 		try {
 			console.log(`[API] Calling ${this.session.hostname}`);
-			const response = await fetch(`https://${this.session.hostname}/services/data/v60.0${endpoint}`, config);
+			const response = await fetch(`https://${this.session.hostname}/services/data/v60.0/${endpoint}`, config);
 
 			if (!response.ok) {
 				throw new Error('API call failed');

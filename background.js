@@ -28,7 +28,6 @@ class BackgroundSessionManager {
 
 				const currentDomain = domains[0].replace('.lightning.force.com', '.my.salesforce.com');
 				chrome.cookies.get({url: 'https://' + currentDomain, name: 'sid'}, sessionCookie => {
-					console.log('currentDomain: ', currentDomain, ' Session Cookie:', sessionCookie);
 					if (sessionCookie) {
 						resolve({
 							key: sessionCookie.value,

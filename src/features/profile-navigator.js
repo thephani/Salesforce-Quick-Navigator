@@ -14,7 +14,7 @@ class ProfileNavigator {
 			const apiService = new SalesforceApiService(session);
 
 			// Comprehensive profile query
-			const profileQuery = `/query?q=SELECT+Id,Name,Description,UserLicense.Name+FROM+Profile`;
+			const profileQuery = `query?q=SELECT+Id,Name,Description,UserLicense.Name+FROM+Profile`;
 
 			const result = await apiService.makeApiCall(profileQuery);
 
@@ -36,14 +36,13 @@ class ProfileNavigator {
 	 */
 	static async navigateToProfile(profileName, action) {
 		try {
-			const tabs = await new Promise(resolve => chrome.tabs.query({active: true, currentWindow: true}, resolve));
-			const currentUrl = tabs[0].url;
+			// const tabs = await new Promise(resolve => chrome.tabs.query({active: true, currentWindow: true}, resolve));
 
-			// Base Salesforce setup URL
-			const baseUrl = currentUrl.split('/setup/')[0];
+			const session = await SessionManager.retrieveSession();
+			const baseUrl = `https://${session.fullHostname}/lightning/setup`;
 
 			// Open in new tab
-			let navigateUrl = `${baseUrl}/setup/EnhancedProfiles/page?address=%2F${profileName}%3Fs%3D${action}`;
+			let navigateUrl = `${baseUrl}/EnhancedProfiles/page?address=%2F${profileName}%3Fs%3D${action}`;
 			chrome.tabs.create({url: navigateUrl});
 		} catch (error) {
 			console.error('Profile navigation error', error);
@@ -61,7 +60,7 @@ class ProfileNavigator {
 			const apiService = new SalesforceApiService(session);
 
 			// Query profile object permissions
-			const objectPermissionsQuery = `/query?q=SELECT+SObjectType,PermissionsCreate,PermissionsRead,PermissionsEdit,PermissionsDelete+FROM+ObjectPermissions+WHERE+ProfileId='${profileId}'`;
+			const objectPermissionsQuery = `query?q=SELECT+SObjectType,PermissionsCreate,PermissionsRead,PermissionsEdit,PermissionsDelete+FROM+ObjectPermissions+WHERE+ProfileId='${profileId}'`;
 
 			const result = await apiService.makeApiCall(objectPermissionsQuery);
 
@@ -137,7 +136,7 @@ class ProfileNavigator {
 				.map(([key, value]) => `${key} LIKE '%${value}%'`)
 				.join(' AND ');
 
-			const query = `/query?q=SELECT+Id,Name,Description,UserLicense.Name+FROM+Profile${whereClause ? ` WHERE ${whereClause}` : ''}`;
+			const query = `query?q=SELECT+Id,Name+FROM+Profile${whereClause ? ` WHERE ${whereClause}` : ''}`;
 
 			const result = await apiService.makeApiCall(query);
 

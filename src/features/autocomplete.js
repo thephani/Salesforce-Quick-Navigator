@@ -37,9 +37,8 @@ class AutocompleteManager {
 	}
 
 	async handleInitialAutocomplete(input) {
-		// Check for object-specific queries
+		const session = await SessionManager.retrieveSession();
 		if (input.includes('objects.') || input.includes('object.')) {
-			const session = await SessionManager.retrieveSession();
 			const objects = await ObjectNavigator.queryAvailableObjects(session);
 			const modifiedInput = input.replace('objects.', '').replace('object.', '');
 
@@ -50,7 +49,6 @@ class AutocompleteManager {
 			console.log('Filtered Objects:', filteredObjects);
 			ObjectNavigator.renderObjectSuggestions(filteredObjects, this.dropdownElement, this.inputElement);
 		} else if (input.includes('profiles.') || input.includes('profile.')) {
-			const session = await SessionManager.retrieveSession();
 			const profiles = await ProfileNavigator.queryAvailableProfiles(session);
 			console.log('All Profiles:', profiles);
 			const modifiedInput = input.replace('profiles.', '').replace('profile.', '');
