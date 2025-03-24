@@ -317,6 +317,13 @@ body {
     font-size: 0.9rem;
 }
 
+.guide-first-level{
+    font-weight: 600;
+    color: var(--primary-color);
+    margin-bottom: 5px;
+    font-size: 0.9rem;
+}
+
 .guide-description {
     color: var(--secondary-color);
     font-size: 0.7rem;
@@ -367,3 +374,26 @@ body {
     );
     border: 1px solid rgba(74, 144, 226, 0.1);
 }
+
+  /* Pills */
+  .qq-pills {
+    display: flex;
+    gap: 0.5rem;
+  }
+  
+  .guide-first-level {
+    padding: 0.5rem 1rem;
+    border-radius: 9999px;
+    border: none;
+    background-color: #f1f5f9;
+    color: #64748b;
+    font-size: 0.875rem;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  
+  .guide-first-level:hover {
+    background-color: #6366f1;
+    color: white;
+  }
+  
