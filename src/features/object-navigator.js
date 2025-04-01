@@ -27,10 +27,6 @@ class ObjectNavigator {
 
 	static async navigateToObjectConfiguration(objectName, action) {
 		try {
-			const tabs = await new Promise(resolve => chrome.tabs.query({active: true, currentWindow: true}, resolve));
-			const currentUrl = tabs[0].url;
-
-			// Construct navigation URL logic here
 			const session = await SessionManager.retrieveSession();
 			console.log('[OBJECT] Session:', session);
 			const baseUrl = 'https://' + session.hostname.replace('.my.salesforce.com', '.my.salesforce-setup.com') + '/lightning';

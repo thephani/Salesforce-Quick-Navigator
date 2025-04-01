@@ -63,3 +63,8 @@ export const OBJECT_ACTIONS = {
 		// {code: 'rt', name: 'Record Types', description: 'Record Types'},
 	],
 };
+
+export const FLOW_ACTIONS = [
+	{code: 'Flow', name: 'Flow Builder', description: 'Open Flow Builder'},
+	{code: 'FlowVersions', name: 'Flow Versions', description: 'Open Flow Versions'}
+];

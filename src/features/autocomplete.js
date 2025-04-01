@@ -1,4 +1,5 @@
 import SessionManager from '../core/session-manager.js';
+import FlowNavigator from './flow-navigator.js';
 import ObjectNavigator from './object-navigator.js';
 import ProfileNavigator from './profile-navigator.js';
 
@@ -28,6 +29,9 @@ class AutocompleteManager {
 				case 'object-selected':
 					this.handleActionAutocomplete(input);
 					break;
+				case 'flow-selection':
+					this.handleActionAutocomplete(input);
+					break;
 			}
 		} catch (error) {
 			console.error('Autocomplete error:', error);
@@ -38,6 +42,7 @@ class AutocompleteManager {
 
 	async handleInitialAutocomplete(input) {
 		const session = await SessionManager.retrieveSession();
+		input = input.toLowerCase().trim();
 		if (input.includes('objects.') || input.includes('object.')) {
 			const objects = await ObjectNavigator.queryAvailableObjects(session);
 			const modifiedInput = input.replace('objects.', '').replace('object.', '');
@@ -60,10 +65,18 @@ class AutocompleteManager {
 
 			await ProfileNavigator.renderProfileSuggestions(filteredProfiles, this.dropdownElement, this.inputElement);
 			// this.resetAutocomplete();
+		} else if (input.includes('flows.') || input.includes('flow.')) {
+			const flows = await FlowNavigator.queryAvailableFlows(session);
+			// console.log('All Flows:', flows);
+			const modifiedInput = input.replace('flows.', '').replace('flow.', '');
+
+			// Filter flows
+			const filteredFlows = flows.filter(flow => flow.label.toLowerCase().includes(modifiedInput));
+			console.log('Filtered Flows:', filteredFlows);
+
+			await FlowNavigator.renderFlowSuggestions(filteredFlows, this.dropdownElement, this.inputElement);
 		}
 	}
-
-	
 
 	handleActionAutocomplete(input) {
 		// If input changes after object selection, reset
