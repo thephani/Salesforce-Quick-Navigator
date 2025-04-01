@@ -66,5 +66,6 @@ export const OBJECT_ACTIONS = {
 
 export const FLOW_ACTIONS = [
 	{code: 'Flow', name: 'Flow Builder', description: 'Open Flow Builder'},
+	{code: 'Debug', name: 'Flow Debugger', description: 'Open Flow Debugger'},
 	{code: 'FlowVersions', name: 'Flow Versions', description: 'Open Flow Versions'}
 ];
