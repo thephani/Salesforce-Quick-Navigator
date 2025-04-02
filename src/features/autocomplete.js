@@ -4,6 +4,20 @@ import FlowNavigator from './flow-navigator.js';
 import ObjectNavigator from './object-navigator.js';
 import ProfileNavigator from './profile-navigator.js';
 
+// Define constants for better maintainability
+const STATES = {
+	INITIAL: 'initial',
+	OBJECT_SELECTED: 'object-selected',
+	FLOW_SELECTED: 'flow-selected',
+	PROFILE_SELECTED: 'profile-selected'
+  };
+  
+  const COMMAND_PREFIXES = {
+	OBJECT: ['objects.', 'object.'],
+	PROFILE: ['profiles.', 'profile.'],
+	FLOW: ['flows.', 'flow.']
+  };
+
 class AutocompleteManager {
 	constructor(inputElement, dropdownElement) {
 		this.inputElement = inputElement;
