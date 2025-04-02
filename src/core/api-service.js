@@ -1,64 +1,49 @@
 class SalesforceApiService {
+	static API_VERSION = 'v62.0'; // Centralized API version
+
 	constructor(session) {
 		this.session = session;
+		this.baseUrl = `https://${this.session.hostname}/services/data/${SalesforceApiService.API_VERSION}`;
 	}
 
+	// Helper method to create headers
+	_createHeaders() {
+		return new Headers({
+			'Authorization': `Bearer ${this.session.key}`,
+			'Content-Type': 'application/json',
+		});
+	}
+
+	// Generic API Call Handler
 	async makeApiCall(endpoint, method = 'GET', body = null) {
-		const headers = new Headers({
-			'Authorization': `Bearer ${this.session.key}`,
-			'Content-Type': 'application/json',
-		});
-
 		const config = {
-			method: method,
-			headers: headers,
+			method,
+			headers: this._createHeaders(),
+			body: body ? JSON.stringify(body) : null,
 		};
 
-		if (body) {
-			config.body = JSON.stringify(body);
-		}
+		const url = `${this.baseUrl}/${endpoint}`;
+		console.log(`[API] ${method} request to: ${url}`);
 
 		try {
-			console.log(`[API] Calling ${this.session.hostname}`);
-			const response = await fetch(`https://${this.session.hostname}/services/data/v60.0/${endpoint}`, config);
+			const response = await fetch(url, config);
+			const data = await response.json();
 
 			if (!response.ok) {
-				throw new Error('API call failed');
+				throw new Error(`API call failed: ${response.status} ${response.statusText} - ${data?.message || 'Unknown error'}`);
 			}
 
-			return await response.json();
+			return data;
 		} catch (error) {
-			console.error('API Error:', error);
+			console.error('[Salesforce API Error]:', error);
 			throw error;
 		}
 	}
 
+	// Query API Call
 	async makeQueryCall(query) {
-		const headers = new Headers({
-			'Authorization': `Bearer ${this.session.key}`,
-			'Content-Type': 'application/json',
-		});
-
-		const config = {
-			method: 'GET',
-			headers: headers,
-		};
-
-		try {
-			console.log(`[API] Calling ${this.session.hostname}`);
-			const response = await fetch(`https://${this.session.hostname}/services/data/v62.0/tooling/query/?q=${query}`, config);
-
-			if (!response.ok) {
-				throw new Error('API call failed');
-			}
-			const result = await response.json();
-			return result;
-		} catch (error) {
-			console.error('API Error:', error);
-			throw error;
-		}
+		return this.makeApiCall(`tooling/query/?q=${encodeURIComponent(query)}`, 'GET');
 	}
-	
 }
 
 export default SalesforceApiService;
