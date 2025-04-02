@@ -1,7 +1,8 @@
 import SalesforceApiService from '../core/api-service.js';
 import SessionManager from '../core/session-manager.js';
-import {PROFILE_ACTIONS} from '../utils/configActions.js';
+import {PROFILE_PERMSET_ACTIONS} from '../utils/configActions.js';
 import AutocompleteManager from './autocomplete.js';
+import { renderActions, renderSuggestions } from './autocomplete/dom-utils.js';
 
 class ProfileNavigator {
   static async queryAvailableProfiles(session) {
@@ -47,7 +48,7 @@ class ProfileNavigator {
         ProfileNavigator.navigateToProfile(profile.id, action)
     };
     
-    AutocompleteManager.renderSuggestions(profiles, dropdownElement, inputElement, config);
+    renderSuggestions(profiles, dropdownElement, inputElement, config);
   }
 
   static renderProfileActions(profile, dropdownElement, inputElement) {
@@ -58,7 +59,7 @@ class ProfileNavigator {
         ProfileNavigator.navigateToProfile(profile.id, action)
     };
     
-    AutocompleteManager.renderActions(profile, dropdownElement, inputElement, PROFILE_ACTIONS, config);
+    renderActions(profile, dropdownElement, inputElement, PROFILE_PERMSET_ACTIONS, config);
   }
 
   // ... (keep all other profile-specific methods unchanged)

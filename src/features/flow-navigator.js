@@ -3,6 +3,7 @@ import SessionManager from '../core/session-manager.js';
 import {FLOW_ACTIONS} from '../utils/configActions.js';
 import ErrorHandler from '../utils/error-handler.js';
 import AutocompleteManager from './autocomplete.js';
+import {renderActions, renderSuggestions} from './autocomplete/dom-utils.js';
 
 class FlowNavigator {
 	static async queryAvailableFlows(session) {
@@ -41,15 +42,15 @@ class FlowNavigator {
 		const config = {
 			prefix: 'Flows',
 			renderItem: flow => `
-        <strong>${flow.label}</strong>
-        <small>${flow.description ?? ''}</small>
-      `,
+						<strong>${flow.label}</strong>
+						<small>${flow.description ?? ''}</small>
+					`,
 			getItemIdentifier: flow => flow.label,
 			renderActions: (flow, dropdown, input) => FlowNavigator.renderFlowActions(flow, dropdown, input),
 			navigate: (flow, action) => FlowNavigator.navigateToFlow(flow, action),
 		};
 
-		AutocompleteManager.renderSuggestions(flows, dropdownElement, inputElement, config);
+		renderSuggestions(flows, dropdownElement, inputElement, config);
 	}
 
 	static renderFlowActions(flow, dropdownElement, inputElement) {
@@ -59,7 +60,7 @@ class FlowNavigator {
 			navigate: (flow, action) => FlowNavigator.navigateToFlow(flow, action),
 		};
 
-		AutocompleteManager.renderActions(flow, dropdownElement, inputElement, FLOW_ACTIONS, config);
+		renderActions(flow, dropdownElement, inputElement, FLOW_ACTIONS, config);
 	}
 }
 

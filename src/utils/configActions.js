@@ -1,5 +1,5 @@
-export const PROFILE_ACTIONS = [
-	{code: '', name: 'Profile Overview', description: 'Profile configuration details'},
+export const PROFILE_PERMSET_ACTIONS = [
+	{code: '', name: 'Overview', description: 'Profile configuration details'},
 	{code: 'AssignedApps', name: 'Assigned Apps', description: 'Apps visible in the app menu'},
 	{code: 'ConnectedApps', name: 'Assigned Connected Apps', description: 'Connected apps visible in the app menu'},
 	{code: 'ObjectsAndTabs', name: 'Object Settings', description: 'Permissions to access objects and fields'},
@@ -67,5 +67,6 @@ export const OBJECT_ACTIONS = {
 export const FLOW_ACTIONS = [
 	{code: 'Flow', name: 'Flow Builder', description: 'Open Flow Builder'},
 	{code: 'Debug', name: 'Flow Debugger', description: 'Open Flow Debugger'},
-	{code: 'FlowVersions', name: 'Flow Versions', description: 'Open Flow Versions'}
+	{code: 'FlowVersions', name: 'Flow Versions', description: 'Open Flow Versions'},
 ];
+
