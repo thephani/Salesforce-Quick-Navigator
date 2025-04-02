@@ -72,4 +72,4 @@ Users are responsible for their configuration actions.
 Last Updated: 03/15/2025
 Version: 1.0.0
 
-© Phanidra Mangipudi - All Rights Reserved
+© thePhani.com - All Rights Reserved
