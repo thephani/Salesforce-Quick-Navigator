@@ -68,7 +68,7 @@ class ObjectNavigator {
     };
     
     // AutocompleteManager.renderActions(obj, dropdownElement, inputElement, actions, config);
-    renderActions(actions, dropdownElement, inputElement, actions, config);
+    renderActions(obj, dropdownElement, inputElement, actions, config);
   }
 }
 
