@@ -1,5 +1,6 @@
 export const PROFILE_PERMSET_ACTIONS = [
 	{code: '', name: 'Overview', description: 'Profile configuration details'},
+	{code: 'assignUsers', name: 'Assigned Users', description: 'Users assigned to this profile'},
 	{code: 'AssignedApps', name: 'Assigned Apps', description: 'Apps visible in the app menu'},
 	{code: 'ConnectedApps', name: 'Assigned Connected Apps', description: 'Connected apps visible in the app menu'},
 	{code: 'ObjectsAndTabs', name: 'Object Settings', description: 'Permissions to access objects and fields'},
@@ -32,6 +33,8 @@ export const PROFILE_PERMSET_ACTIONS = [
 	},
 	{code: 'PasswordPolicies', name: 'Password Policies', description: 'Profile Based password policies'},
 	{code: 'NetworkAffinity', name: 'Default Experience', description: 'Setting for assigning a default community to a user profile'},
+	// lightning/setup/PermSets/0PS1I000000C5ag/PermissionSetAssignment/home
+	// lightning/setup/EnhancedProfiles/page?address=%2F005%3Fid%3D00e1I000000NhB0%26isUserEntityOverride%3D1%26SetupNode%3DEnhancedProfiles
 ];
 
 export const OBJECT_ACTIONS = {
@@ -70,3 +73,7 @@ export const FLOW_ACTIONS = [
 	{code: 'FlowVersions', name: 'Flow Versions', description: 'Open Flow Versions'},
 ];
 
+export const APPS_ACTIONS = [
+	{code: 'view', name: 'View App', description: 'Open App'},
+	{code: 'edit', name: 'Edit Policies', description: 'Edit Policies'}
+];

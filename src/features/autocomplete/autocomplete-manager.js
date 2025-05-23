@@ -25,6 +25,7 @@ class AutocompleteManager {
 			case STATES.OBJECT_SELECTED:
 			case STATES.FLOW_SELECTED:
 			case STATES.PROFILE_SELECTED:
+			case STATES.APP_SELECTED:
 				handleActionAutocomplete(input, this);
 				break;
 			default:

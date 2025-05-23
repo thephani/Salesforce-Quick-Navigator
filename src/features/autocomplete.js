@@ -1,6 +1,8 @@
 import SessionManager from '../core/session-manager.js';
 import ErrorHandler from '../utils/error-handler.js';
 import FlowNavigator from './flow-navigator.js';
+import NavigatorService from './navigator.service.js';
+import {NAVIGATOR_CONFIGS} from './navigatorService.helper.js';
 import ObjectNavigator from './object-navigator.js';
 import PermissionSetNavigator from './permissionSet-navigator.js';
 import ProfileNavigator from './profile-navigator.js';
@@ -11,6 +13,7 @@ const STATES = {
 	OBJECT_SELECTED: 'object-selected',
 	FLOW_SELECTED: 'flow-selected',
 	PROFILE_SELECTED: 'profile-selected',
+	APP_SELECTED: 'app-selected',
 };
 
 const COMMAND_PREFIXES = {
@@ -42,6 +45,7 @@ class AutocompleteManager {
 			case STATES.OBJECT_SELECTED:
 			case STATES.FLOW_SELECTED:
 			case STATES.PROFILE_SELECTED:
+			case STATES.APP_SELECTED:
 				this.handleActionAutocomplete(input);
 				break;
 			default:
@@ -50,6 +54,7 @@ class AutocompleteManager {
 	}
 
 	async handleAutocomplete(e) {
+		console.log('Autocomplete triggered:', e.target.value);
 		const input = e.target.value.toLowerCase().trim();
 
 		// Reset if input is empty
@@ -105,11 +110,22 @@ class AutocompleteManager {
 				filterKey: ['label'],
 				render: data => PermissionSetNavigator.renderPermissionSetSuggestions(data, this.dropdownElement, this.inputElement),
 			},
+			apps: {
+				query: () => NavigatorService.queryMetadata(session, NAVIGATOR_CONFIGS.APPS),
+				filterKey: ['name'],
+				render: data => NavigatorService.renderSuggestions(data, this.dropdownElement, this.inputElement, NAVIGATOR_CONFIGS.APPS),
+			},
 		};
+
+		// 		const apps = await NavigatorService.queryMetadata(session, NAVIGATOR_CONFIGS.APPS);
+		// NavigatorService.renderSuggestions(apps, dropdownElement, inputElement, NAVIGATOR_CONFIGS.APPS);
 
 		// Determine entity type
 		const matchedEntity = Object.keys(entityHandlers).find(type => input.startsWith(type + '.'));
-		if (!matchedEntity) { console.log('Input not found'); return};
+		if (!matchedEntity) {
+			console.log('Input not found');
+			return;
+		}
 
 		// Get the appropriate handler
 		const {query, filterKey, render} = entityHandlers[matchedEntity];
@@ -119,9 +135,15 @@ class AutocompleteManager {
 
 		// Fetch available items
 		const items = await query();
+		console.log(`Fetched ${matchedEntity}:`, items);
 
 		// Filter items based on input
-		const filteredItems = items.filter(item => filterKey.some(key => item[key].toLowerCase().includes(modifiedInput)));
+		const filteredItems = items.filter(item =>
+			filterKey.some(key => {
+				console.log(`Checking ${key}:`, item[key]);
+				return item[key]?.toLowerCase()?.includes(modifiedInput);
+			})
+		);
 
 		console.log(`Filtered ${matchedEntity}:`, filteredItems);
 
