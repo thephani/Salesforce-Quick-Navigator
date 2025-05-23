@@ -1,7 +1,10 @@
 import SessionManager from '../core/session-manager.js';
 import ErrorHandler from '../utils/error-handler.js';
 import FlowNavigator from './flow-navigator.js';
+import NavigatorService from './navigator.service.js';
+import {NAVIGATOR_CONFIGS} from './navigatorService.helper.js';
 import ObjectNavigator from './object-navigator.js';
+import PermissionSetNavigator from './permissionSet-navigator.js';
 import ProfileNavigator from './profile-navigator.js';
 
 // Define constants for better maintainability
@@ -9,24 +12,49 @@ const STATES = {
 	INITIAL: 'initial',
 	OBJECT_SELECTED: 'object-selected',
 	FLOW_SELECTED: 'flow-selected',
-	PROFILE_SELECTED: 'profile-selected'
-  };
-  
-  const COMMAND_PREFIXES = {
+	PROFILE_SELECTED: 'profile-selected',
+	APP_SELECTED: 'app-selected',
+};
+
+const COMMAND_PREFIXES = {
 	OBJECT: ['objects.', 'object.'],
 	PROFILE: ['profiles.', 'profile.'],
-	FLOW: ['flows.', 'flow.']
-  };
+	FLOW: ['flows.', 'flow.'],
+};
 
 class AutocompleteManager {
 	constructor(inputElement, dropdownElement) {
 		this.inputElement = inputElement;
 		this.dropdownElement = dropdownElement;
-		this.currentState = 'initial'; // States: initial, object-selected, action-selection
-		this.selectedObject = null;
+		this.currentState = STATES.INITIAL;
+		this.selectedItem = null;
+		this.debounceTimer = null;
+	}
+
+	async processInput(input) {
+		// Reset if input is empty
+		if (input.length === 0) {
+			this.resetAutocomplete();
+			return;
+		}
+
+		switch (this.currentState) {
+			case STATES.INITIAL:
+				await this.handleInitialAutocomplete(input);
+				break;
+			case STATES.OBJECT_SELECTED:
+			case STATES.FLOW_SELECTED:
+			case STATES.PROFILE_SELECTED:
+			case STATES.APP_SELECTED:
+				this.handleActionAutocomplete(input);
+				break;
+			default:
+				this.resetAutocomplete();
+		}
 	}
 
 	async handleAutocomplete(e) {
+		console.log('Autocomplete triggered:', e.target.value);
 		const input = e.target.value.toLowerCase().trim();
 
 		// Reset if input is empty
@@ -38,15 +66,16 @@ class AutocompleteManager {
 		try {
 			// Determine autocomplete context
 			switch (this.currentState) {
-				case 'initial':
+				case STATES.INITIAL:
 					await this.handleInitialAutocomplete(input);
 					break;
-				case 'object-selected':
+				case STATES.OBJECT_SELECTED:
+				case STATES.FLOW_SELECTED:
+				case STATES.PROFILE_SELECTED:
 					this.handleActionAutocomplete(input);
 					break;
-				case 'flow-selection':
-					this.handleActionAutocomplete(input);
-					break;
+				default:
+					this.resetAutocomplete();
 			}
 		} catch (error) {
 			console.error('Autocomplete error:', error);
@@ -58,39 +87,68 @@ class AutocompleteManager {
 	async handleInitialAutocomplete(input) {
 		const session = await SessionManager.retrieveSession();
 		input = input.toLowerCase().trim();
-		if (input.includes('objects.') || input.includes('object.')) {
-			const objects = await ObjectNavigator.queryAvailableObjects(session);
-			const modifiedInput = input.replace('objects.', '').replace('object.', '');
+		console.log('Input:', input);
 
-			// Filter objects
-			const filteredObjects = objects.filter(
-				obj => obj.label.toLowerCase().includes(modifiedInput) || obj.apiName.toLowerCase().includes(modifiedInput)
-			);
-			console.log('Filtered Objects:', filteredObjects);
-			ObjectNavigator.renderObjectSuggestions(filteredObjects, this.dropdownElement, this.inputElement);
-		} else if (input.includes('profiles.') || input.includes('profile.')) {
-			const profiles = await ProfileNavigator.queryAvailableProfiles(session);
-			console.log('All Profiles:', profiles);
-			const modifiedInput = input.replace('profiles.', '').replace('profile.', '');
+		const entityHandlers = {
+			objects: {
+				query: () => ObjectNavigator.queryAvailableObjects(session),
+				filterKey: ['label', 'apiName'],
+				render: data => ObjectNavigator.renderObjectSuggestions(data, this.dropdownElement, this.inputElement),
+			},
+			profiles: {
+				query: () => ProfileNavigator.queryAvailableProfiles(session),
+				filterKey: ['name'],
+				render: data => ProfileNavigator.renderProfileSuggestions(data, this.dropdownElement, this.inputElement),
+			},
+			flows: {
+				query: () => FlowNavigator.queryAvailableFlows(session),
+				filterKey: ['label'],
+				render: data => FlowNavigator.renderFlowSuggestions(data, this.dropdownElement, this.inputElement),
+			},
+			permsets: {
+				query: () => PermissionSetNavigator.queryAvailablePermissionSets(session),
+				filterKey: ['label'],
+				render: data => PermissionSetNavigator.renderPermissionSetSuggestions(data, this.dropdownElement, this.inputElement),
+			},
+			apps: {
+				query: () => NavigatorService.queryMetadata(session, NAVIGATOR_CONFIGS.APPS),
+				filterKey: ['name'],
+				render: data => NavigatorService.renderSuggestions(data, this.dropdownElement, this.inputElement, NAVIGATOR_CONFIGS.APPS),
+			},
+		};
 
-			// Filter profiles
-			const filteredProfiles = profiles.filter(profile => profile.name.toLowerCase().includes(modifiedInput));
-			console.log('Filtered Profiles:', filteredProfiles);
-			// lightning/setup/EnhancedProfiles/page?address=%2F00e8W000000Njyi
+		// 		const apps = await NavigatorService.queryMetadata(session, NAVIGATOR_CONFIGS.APPS);
+		// NavigatorService.renderSuggestions(apps, dropdownElement, inputElement, NAVIGATOR_CONFIGS.APPS);
 
-			await ProfileNavigator.renderProfileSuggestions(filteredProfiles, this.dropdownElement, this.inputElement);
-			// this.resetAutocomplete();
-		} else if (input.includes('flows.') || input.includes('flow.')) {
-			const flows = await FlowNavigator.queryAvailableFlows(session);
-			// console.log('All Flows:', flows);
-			const modifiedInput = input.replace('flows.', '').replace('flow.', '');
-
-			// Filter flows
-			const filteredFlows = flows.filter(flow => flow.label.toLowerCase().includes(modifiedInput));
-			console.log('Filtered Flows:', filteredFlows);
-
-			await FlowNavigator.renderFlowSuggestions(filteredFlows, this.dropdownElement, this.inputElement);
+		// Determine entity type
+		const matchedEntity = Object.keys(entityHandlers).find(type => input.startsWith(type + '.'));
+		if (!matchedEntity) {
+			console.log('Input not found');
+			return;
 		}
+
+		// Get the appropriate handler
+		const {query, filterKey, render} = entityHandlers[matchedEntity];
+
+		// Remove entity prefix from input
+		const modifiedInput = input.replace(`${matchedEntity}.`, '');
+
+		// Fetch available items
+		const items = await query();
+		console.log(`Fetched ${matchedEntity}:`, items);
+
+		// Filter items based on input
+		const filteredItems = items.filter(item =>
+			filterKey.some(key => {
+				console.log(`Checking ${key}:`, item[key]);
+				return item[key]?.toLowerCase()?.includes(modifiedInput);
+			})
+		);
+
+		console.log(`Filtered ${matchedEntity}:`, filteredItems);
+
+		// Render suggestions
+		await render(filteredItems);
 	}
 
 	handleActionAutocomplete(input) {
@@ -105,51 +163,6 @@ class AutocompleteManager {
 		this.selectedObject = null;
 		this.dropdownElement.style.display = 'none';
 		this.dropdownElement.innerHTML = '';
-	}
-
-	static async renderSuggestions(items, dropdownElement, inputElement, config) {
-		dropdownElement.innerHTML = '';
-		dropdownElement.style.display = 'none';
-
-		if (items.length === 0) return;
-
-		items.slice(0, 10).forEach(item => {
-			const suggestionEl = document.createElement('div');
-			suggestionEl.classList.add('autocomplete-item');
-			suggestionEl.innerHTML = config.renderItem(item);
-
-			suggestionEl.addEventListener('click', () => {
-				inputElement.value = `${config.prefix}.${config.getItemIdentifier(item)}.`;
-				config.renderActions(item, dropdownElement, inputElement);
-			});
-
-			dropdownElement.appendChild(suggestionEl);
-		});
-
-		dropdownElement.style.display = 'block';
-	}
-
-	static renderActions(item, dropdownElement, inputElement, actions, config) {
-		dropdownElement.innerHTML = '';
-
-		actions.forEach(action => {
-			const actionEl = document.createElement('div');
-			actionEl.classList.add('autocomplete-item');
-			actionEl.innerHTML = `
-			<strong>${action.name}</strong>
-			<small>${action.description}</small>
-		  `;
-
-			actionEl.addEventListener('click', () => {
-				inputElement.value = `${config.prefix}.${config.getItemIdentifier(item)}.${action.code}`;
-				dropdownElement.style.display = 'none';
-				config.navigate(item, action.code);
-			});
-
-			dropdownElement.appendChild(actionEl);
-		});
-
-		dropdownElement.style.display = 'block';
 	}
 
 	static async queryWithErrorHandling(apiCall, errorMessage) {

@@ -3,6 +3,7 @@ import SessionManager from '../core/session-manager.js';
 import {OBJECT_ACTIONS} from '../utils/configActions.js';
 import ErrorHandler from '../utils/error-handler.js';
 import AutocompleteManager from './autocomplete.js';
+import { renderActions, renderSuggestions } from './autocomplete/dom-utils.js';
 
 class ObjectNavigator {
   static async queryAvailableObjects(session) {
@@ -51,7 +52,8 @@ class ObjectNavigator {
         ObjectNavigator.navigateToObjectConfiguration(obj.apiName, action)
     };
     
-    AutocompleteManager.renderSuggestions(objects, dropdownElement, inputElement, config);
+    // AutocompleteManager.renderSuggestions(objects, dropdownElement, inputElement, config);
+    renderSuggestions(objects, dropdownElement, inputElement, config);
   }
 
   static renderObjectActions(obj, dropdownElement, inputElement) {
@@ -65,7 +67,8 @@ class ObjectNavigator {
         ObjectNavigator.navigateToObjectConfiguration(obj.apiName, action)
     };
     
-    AutocompleteManager.renderActions(obj, dropdownElement, inputElement, actions, config);
+    // AutocompleteManager.renderActions(obj, dropdownElement, inputElement, actions, config);
+    renderActions(obj, dropdownElement, inputElement, actions, config);
   }
 }
 
