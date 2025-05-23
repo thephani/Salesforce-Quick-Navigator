@@ -3,7 +3,7 @@ import {APPS_ACTIONS, OBJECT_ACTIONS} from '../utils/configActions.js';
 export const NAVIGATOR_CONFIGS = {
 	APPS: {
 		prefix: 'Apps',
-		queryType: 'SOQL',
+		queryType: 'TOOLING',
 		getItemIdentifier: app => app.name,
 		renderItem: app => `
                 <strong>${app.name}</strong>

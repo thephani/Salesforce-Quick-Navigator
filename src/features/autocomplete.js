@@ -1,9 +1,9 @@
 import SessionManager from '../core/session-manager.js';
 import ErrorHandler from '../utils/error-handler.js';
 import FlowNavigator from './flow-navigator.js';
+import {APPS_MENU_CONFIG} from './menuItems/apps.menu.js';
+import {OBJECTS_MENU_CONFIG} from './menuItems/objects.menu.js';
 import NavigatorService from './navigator.service.js';
-import {NAVIGATOR_CONFIGS} from './navigatorService.helper.js';
-import ObjectNavigator from './object-navigator.js';
 import PermissionSetNavigator from './permissionSet-navigator.js';
 import ProfileNavigator from './profile-navigator.js';
 
@@ -91,9 +91,9 @@ class AutocompleteManager {
 
 		const entityHandlers = {
 			objects: {
-				query: () => ObjectNavigator.queryAvailableObjects(session),
+				query: () => NavigatorService.queryMetadata(session, OBJECTS_MENU_CONFIG),
 				filterKey: ['label', 'apiName'],
-				render: data => ObjectNavigator.renderObjectSuggestions(data, this.dropdownElement, this.inputElement),
+				render: data => NavigatorService.renderSuggestions(data, this.dropdownElement, this.inputElement, OBJECTS_MENU_CONFIG),
 			},
 			profiles: {
 				query: () => ProfileNavigator.queryAvailableProfiles(session),
@@ -111,9 +111,9 @@ class AutocompleteManager {
 				render: data => PermissionSetNavigator.renderPermissionSetSuggestions(data, this.dropdownElement, this.inputElement),
 			},
 			apps: {
-				query: () => NavigatorService.queryMetadata(session, NAVIGATOR_CONFIGS.APPS),
+				query: () => NavigatorService.queryMetadata(session, APPS_MENU_CONFIG),
 				filterKey: ['name'],
-				render: data => NavigatorService.renderSuggestions(data, this.dropdownElement, this.inputElement, NAVIGATOR_CONFIGS.APPS),
+				render: data => NavigatorService.renderSuggestions(data, this.dropdownElement, this.inputElement, APPS_MENU_CONFIG),
 			},
 		};
 
@@ -140,7 +140,6 @@ class AutocompleteManager {
 		// Filter items based on input
 		const filteredItems = items.filter(item =>
 			filterKey.some(key => {
-				console.log(`Checking ${key}:`, item[key]);
 				return item[key]?.toLowerCase()?.includes(modifiedInput);
 			})
 		);

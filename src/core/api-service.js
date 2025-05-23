@@ -15,7 +15,7 @@ class SalesforceApiService {
 	}
 
 	// Generic API Call Handler
-	async makeApiCall(endpoint, method = 'GET', body = null) {
+	async invokeREST(endpoint, method = 'GET', body = null) {
 		const config = {
 			method,
 			headers: this._createHeaders(),
@@ -41,8 +41,8 @@ class SalesforceApiService {
 	}
 
 	// Query API Call
-	async makeQueryCall(query) {
-		return this.makeApiCall(`tooling/query/?q=${encodeURIComponent(query)}`, 'GET');
+	async invokeTOOLING(query) {
+		return this.invokeREST(`tooling/query/?q=${encodeURIComponent(query)}`, 'GET');
 	}
 }
 
