@@ -23,25 +23,12 @@ class NavigatorService {
 	}
 
 	static async navigateToItem(item, action, urlConfig) {
+		console.log('Navigating to item:', item, action);
 		try {
 			const session = await SessionManager.retrieveSession();
 			let navigateUrl;
 
-			if (typeof urlConfig === 'function') {
-				navigateUrl = urlConfig(session, item, action);
-			}
-			// else {
-			// 	const baseUrl = `https://${session.fullHostname || session.hostname}`;
-			// 	navigateUrl = `${baseUrl}${urlConfig.basePath}`;
-
-			// 	if (urlConfig.queryParams) {
-			// 		const params = new URLSearchParams();
-			// 		Object.entries(urlConfig.queryParams(item, action)).forEach(([key, value]) => {
-			// 			if (value) params.append(key, value);
-			// 		});
-			// 		navigateUrl += `?${params.toString()}`;
-			// 	}
-			// }
+			navigateUrl = urlConfig(session, item, action);
 
 			chrome.tabs.create({url: navigateUrl});
 		} catch (error) {

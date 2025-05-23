@@ -1,6 +1,7 @@
 export const APPS_MENU_CONFIG = {
 	prefix: 'Apps',
 	queryType: 'TOOLING',
+	filterKey: ['name'],
 	getItemIdentifier: app => app.name,
 	renderItem: app => `
         <strong>${app.name}</strong>
