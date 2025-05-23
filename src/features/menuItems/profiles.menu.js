@@ -19,12 +19,9 @@ export const PROFILES_MENU_CONFIG = {
       `,
 	urlConfig: (session, profile, action) => {
 		const baseUrl = `https://${session.fullHostname}/lightning/setup`;
-		const navigateUrl = `${baseUrl}/EnhancedProfiles/page?address=%2F${profile.id}%3Fs%3D${action}`;
-		return navigateUrl;
+		return `${baseUrl}/EnhancedProfiles/page?address=%2F${profile.id}%3Fs%3D${action}`;
 	},
 	getItemIdentifier: profile => profile.name,
-	renderActions: (profile, dropdown, input) => ProfileNavigator.renderProfileActions(profile, dropdown, input),
-	navigate: (profile, action) => ProfileNavigator.navigateToProfile(profile.id, action),
 	actions: [
 		{code: '', name: 'Overview', description: 'Profile configuration details'},
 		{code: 'assignUsers', name: 'Assigned Users', description: 'Users assigned to this profile'},

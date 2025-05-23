@@ -1,12 +1,11 @@
 import SessionManager from '../core/session-manager.js';
 import ErrorHandler from '../utils/error-handler.js';
-import FlowNavigator from './flow-navigator.js';
 import {APPS_MENU_CONFIG} from './menuItems/apps.menu.js';
+import {FLOWS_MENU_CONFIG} from './menuItems/flows.menu.js';
 import {OBJECTS_MENU_CONFIG} from './menuItems/objects.menu.js';
-import { PROFILES_MENU_CONFIG } from './menuItems/profiles.menu.js';
+import {PERMSETS_MENU_CONFIG} from './menuItems/permsets.menu.js';
+import {PROFILES_MENU_CONFIG} from './menuItems/profiles.menu.js';
 import NavigatorService from './navigator.service.js';
-import PermissionSetNavigator from './permissionSet-navigator.js';
-import ProfileNavigator from './profile-navigator.js';
 
 // Define constants for better maintainability
 const STATES = {
@@ -90,19 +89,25 @@ class AutocompleteManager {
 		input = input.toLowerCase().trim();
 		console.log('Input:', input);
 
-		const newEntityHandlers = {objects: OBJECTS_MENU_CONFIG, apps: APPS_MENU_CONFIG, profiles: PROFILES_MENU_CONFIG};
+		const newEntityHandlers = {
+			objects: OBJECTS_MENU_CONFIG,
+			apps: APPS_MENU_CONFIG,
+			profiles: PROFILES_MENU_CONFIG,
+			flows: FLOWS_MENU_CONFIG,
+			permsets: PERMSETS_MENU_CONFIG,
+		};
 		console.log('New entity handlers:', newEntityHandlers);
-		// const entityHandlers = { 
+		// const entityHandlers = {
 		// 	flows: {
 		// 		query: () => FlowNavigator.queryAvailableFlows(session),
-		// 		filterKey: ['label'],
+		//
 		// 		render: data => FlowNavigator.renderFlowSuggestions(data, this.dropdownElement, this.inputElement),
 		// 	},
 		// 	permsets: {
 		// 		query: () => PermissionSetNavigator.queryAvailablePermissionSets(session),
 		// 		filterKey: ['label'],
 		// 		render: data => PermissionSetNavigator.renderPermissionSetSuggestions(data, this.dropdownElement, this.inputElement),
-		// 	}, 
+		// 	},
 		// };
 
 		// 		const apps = await NavigatorService.queryMetadata(session, NAVIGATOR_CONFIGS.APPS);
