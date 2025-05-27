@@ -14,7 +14,7 @@ class SalesforceApiService {
 		});
 	}
 
-	// Generic API Call Handler
+	// Generic API Call Handler with pagination support
 	async invokeREST(endpoint, method = 'GET', body = null) {
 		const config = {
 			method,
@@ -33,6 +33,28 @@ class SalesforceApiService {
 				throw new Error(`API call failed: ${response.status} ${response.statusText} - ${data?.message || 'Unknown error'}`);
 			}
 
+			// Handle pagination if nextRecordsUrl exists
+			if (data.nextRecordsUrl) {
+				const nextUrl = data.nextRecordsUrl.startsWith('/') ? `https://${this.session.hostname}${data.nextRecordsUrl}` : data.nextRecordsUrl;
+
+				const nextData = await this.invokeREST(nextUrl.replace(this.baseUrl + '/', ''), method, body);
+
+				// Combine records
+				if (Array.isArray(data.records) && Array.isArray(nextData.records)) {
+					data.records = data.records.concat(nextData.records);
+					data.done = nextData.done;
+					data.nextRecordsUrl = nextData.nextRecordsUrl;
+				} else {
+					// For non-query endpoints that might have pagination
+					if (Array.isArray(data)) {
+						data = data.concat(nextData);
+					} else {
+						// For object responses, merge them (may need customization based on endpoint)
+						data = {...data, ...nextData};
+					}
+				}
+			}
+
 			return data;
 		} catch (error) {
 			console.error('[Salesforce API Error]:', error);
@@ -40,9 +62,30 @@ class SalesforceApiService {
 		}
 	}
 
-	// Query API Call
+	// Query API Call with automatic pagination handling
 	async invokeTOOLING(query) {
-		return this.invokeREST(`tooling/query/?q=${encodeURIComponent(query)}`, 'GET');
+		const initialResponse = await this.invokeREST(`tooling/query/?q=${encodeURIComponent(query)}`, 'GET');
+
+		// Tooling API returns records in a different structure than REST API
+		if (initialResponse.records && initialResponse.records.length > 0 && initialResponse.done === false) {
+			let combinedRecords = [...initialResponse.records];
+			let nextRecordsUrl = initialResponse.nextRecordsUrl;
+
+			while (nextRecordsUrl) {
+				const nextResponse = await this.invokeREST(nextRecordsUrl.replace(this.baseUrl + '/', ''), 'GET');
+				combinedRecords = combinedRecords.concat(nextResponse.records);
+				nextRecordsUrl = nextResponse.nextRecordsUrl;
+			}
+
+			return {
+				...initialResponse,
+				records: combinedRecords,
+				done: true,
+				nextRecordsUrl: null,
+			};
+		}
+
+		return initialResponse;
 	}
 }
 
