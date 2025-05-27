@@ -2,6 +2,7 @@ import SessionManager from '../core/session-manager.js';
 import ErrorHandler from '../utils/error-handler.js';
 import {APPS_MENU_CONFIG} from './menuItems/apps.menu.js';
 import {FLOWS_MENU_CONFIG} from './menuItems/flows.menu.js';
+import { LABELS_MENU_CONFIG } from './menuItems/labels.menu.js';
 import {OBJECTS_MENU_CONFIG} from './menuItems/objects.menu.js';
 import {PERMSETS_MENU_CONFIG} from './menuItems/permsets.menu.js';
 import {PROFILES_MENU_CONFIG} from './menuItems/profiles.menu.js';
@@ -9,17 +10,33 @@ import NavigatorService from './navigator.service.js';
 
 // Define constants for better maintainability
 const STATES = {
-	INITIAL: 'initial',
-	OBJECT_SELECTED: 'object-selected',
-	FLOW_SELECTED: 'flow-selected',
-	PROFILE_SELECTED: 'profile-selected',
-	APP_SELECTED: 'app-selected',
+	INITIAL: 'INITIAL',
+	OBJECT_SELECTED: 'OBJECTS_SELECTED',
+	FLOW_SELECTED: 'FLOWS_SELECTED',
+	PROFILE_SELECTED: 'PROFILES_SELECTED',
+	APP_SELECTED: 'APPS_SELECTED',
+	LABEL_SELECTED: 'LABELS_SELECTED',
+	PERMSET_SELECTED: 'PERMSETS_SELECTED',
 };
 
-const COMMAND_PREFIXES = {
-	OBJECT: ['objects.', 'object.'],
-	PROFILE: ['profiles.', 'profile.'],
-	FLOW: ['flows.', 'flow.'],
+// Holds the API data per state
+const STATE_STORE = {
+	[STATES.INITIAL]: [],
+	[STATES.OBJECT_SELECTED]: {CONFIG: {}, DATA: []},
+	[STATES.FLOW_SELECTED]: {CONFIG: {}, DATA: []},
+	[STATES.PROFILE_SELECTED]: {CONFIG: {}, DATA: []},
+	[STATES.APP_SELECTED]: {CONFIG: {}, DATA: []},
+	[STATES.LABEL_SELECTED]: {CONFIG: {}, DATA: []},
+	[STATES.PERMSET_SELECTED]: {CONFIG: {}, DATA: []},
+};
+
+const newEntityHandlers = {
+	objects: OBJECTS_MENU_CONFIG,
+	apps: APPS_MENU_CONFIG,
+	profiles: PROFILES_MENU_CONFIG,
+	flows: FLOWS_MENU_CONFIG,
+	permsets: PERMSETS_MENU_CONFIG,
+	labels: LABELS_MENU_CONFIG,
 };
 
 class AutocompleteManager {
@@ -29,28 +46,6 @@ class AutocompleteManager {
 		this.currentState = STATES.INITIAL;
 		this.selectedItem = null;
 		this.debounceTimer = null;
-	}
-
-	async processInput(input) {
-		// Reset if input is empty
-		if (input.length === 0) {
-			this.resetAutocomplete();
-			return;
-		}
-
-		switch (this.currentState) {
-			case STATES.INITIAL:
-				await this.handleInitialAutocomplete(input);
-				break;
-			case STATES.OBJECT_SELECTED:
-			case STATES.FLOW_SELECTED:
-			case STATES.PROFILE_SELECTED:
-			case STATES.APP_SELECTED:
-				this.handleActionAutocomplete(input);
-				break;
-			default:
-				this.resetAutocomplete();
-		}
 	}
 
 	async handleAutocomplete(e) {
@@ -65,17 +60,11 @@ class AutocompleteManager {
 
 		try {
 			// Determine autocomplete context
-			switch (this.currentState) {
-				case STATES.INITIAL:
-					await this.handleInitialAutocomplete(input);
-					break;
-				case STATES.OBJECT_SELECTED:
-				case STATES.FLOW_SELECTED:
-				case STATES.PROFILE_SELECTED:
-					this.handleActionAutocomplete(input);
-					break;
-				default:
-					this.resetAutocomplete();
+			if (this.currentState) {
+				await this.handleInputText(input);
+			} else {
+				console.log('Current state is not set, defaulting to INITIAL');
+				this.resetAutocomplete();
 			}
 		} catch (error) {
 			console.error('Autocomplete error:', error);
@@ -84,34 +73,11 @@ class AutocompleteManager {
 		}
 	}
 
-	async handleInitialAutocomplete(input) {
+	async handleInputText(input) {
+		console.log('[STATE_STORE]', STATE_STORE);
 		const session = await SessionManager.retrieveSession();
 		input = input.toLowerCase().trim();
 		console.log('Input:', input);
-
-		const newEntityHandlers = {
-			objects: OBJECTS_MENU_CONFIG,
-			apps: APPS_MENU_CONFIG,
-			profiles: PROFILES_MENU_CONFIG,
-			flows: FLOWS_MENU_CONFIG,
-			permsets: PERMSETS_MENU_CONFIG,
-		};
-		console.log('New entity handlers:', newEntityHandlers);
-		// const entityHandlers = {
-		// 	flows: {
-		// 		query: () => FlowNavigator.queryAvailableFlows(session),
-		//
-		// 		render: data => FlowNavigator.renderFlowSuggestions(data, this.dropdownElement, this.inputElement),
-		// 	},
-		// 	permsets: {
-		// 		query: () => PermissionSetNavigator.queryAvailablePermissionSets(session),
-		// 		filterKey: ['label'],
-		// 		render: data => PermissionSetNavigator.renderPermissionSetSuggestions(data, this.dropdownElement, this.inputElement),
-		// 	},
-		// };
-
-		// 		const apps = await NavigatorService.queryMetadata(session, NAVIGATOR_CONFIGS.APPS);
-		// NavigatorService.renderSuggestions(apps, dropdownElement, inputElement, NAVIGATOR_CONFIGS.APPS);
 
 		// Determine entity type
 		const matchedEntity = Object.keys(newEntityHandlers).find(type => {
@@ -121,46 +87,55 @@ class AutocompleteManager {
 		});
 		console.log('Matched entity:', matchedEntity, newEntityHandlers[matchedEntity]);
 		const SELECTED_ENTITY = newEntityHandlers[matchedEntity];
+		this.currentState = matchedEntity.toUpperCase() + '_SELECTED';
+		console.log('Current state set to:', this.currentState, STATE_STORE[this.currentState]);
+
 		console.log('Selected entity:', SELECTED_ENTITY.filterKey);
 		if (!matchedEntity) {
 			console.log('Input not found');
 			return;
 		}
 
-		// Get the appropriate handler
-		// const {query, filterKey, render} = entityHandlers[matchedEntity];
+		STATE_STORE[this.currentState].CONFIG = SELECTED_ENTITY;
 
 		// Remove entity prefix from input
 		const modifiedInput = input.replace(`${matchedEntity}.`, '');
 
 		// Fetch available items
-		const items = await NavigatorService.queryMetadata(session, SELECTED_ENTITY);
-		console.log(`Fetched ${matchedEntity}:`, items);
+		let data = [];
+		if (STATE_STORE[this.currentState]?.DATA?.length > 0) {
+			console.log(`Using cached ${matchedEntity}:, STATE_STORE[this.currentState]`);
+			data = STATE_STORE[this.currentState].DATA;
+		} else {
+			data = await NavigatorService.queryMetadata(session, SELECTED_ENTITY);
+			STATE_STORE[this.currentState].DATA = data;
+		}
 
 		// Filter items based on input
-		const filteredItems = items.filter(item =>
+		const filteredItems = data.filter(item =>
 			SELECTED_ENTITY.filterKey.some(key => {
 				return item[key]?.toLowerCase()?.includes(modifiedInput);
 			})
 		);
 
 		console.log(`Filtered ${matchedEntity}:`, filteredItems);
+		console.log('selected state:', this.currentState, STATE_STORE[this.currentState]);
 
 		// Render suggestions
-		// await render(filteredItems);
 		await NavigatorService.renderSuggestions(filteredItems, this.dropdownElement, this.inputElement, SELECTED_ENTITY);
 	}
 
 	handleActionAutocomplete(input) {
+		console.log('Handling action autocomplete for input:', input);
 		// If input changes after object selection, reset
 		if (!input.includes('.')) {
 			this.resetAutocomplete();
+			console.log('Input does not contain a dot, resetting autocomplete');
 		}
 	}
 
 	resetAutocomplete() {
-		this.currentState = 'initial';
-		this.selectedObject = null;
+		this.currentState = 'INITIAL';
 		this.dropdownElement.style.display = 'none';
 		this.dropdownElement.innerHTML = '';
 	}
