@@ -1,6 +1,7 @@
 import SessionManager from '../core/session-manager.js';
 import ErrorHandler from '../utils/error-handler.js';
 import {APPS_MENU_CONFIG} from './menuItems/apps.menu.js';
+import { ESD_MENU_CONFIG } from './menuItems/esd.menu.js';
 import {FLOWS_MENU_CONFIG} from './menuItems/flows.menu.js';
 import { LABELS_MENU_CONFIG } from './menuItems/labels.menu.js';
 import {OBJECTS_MENU_CONFIG} from './menuItems/objects.menu.js';
@@ -17,6 +18,8 @@ const STATES = {
 	APP_SELECTED: 'APPS_SELECTED',
 	LABEL_SELECTED: 'LABELS_SELECTED',
 	PERMSET_SELECTED: 'PERMSETS_SELECTED',
+	ESD_SELECTED: 'ESD_SELECTED',
+	BOTS_SELECTED: 'BOTS_SELECTED'
 };
 
 // Holds the API data per state
@@ -28,6 +31,8 @@ const STATE_STORE = {
 	[STATES.APP_SELECTED]: {CONFIG: {}, DATA: []},
 	[STATES.LABEL_SELECTED]: {CONFIG: {}, DATA: []},
 	[STATES.PERMSET_SELECTED]: {CONFIG: {}, DATA: []},
+	[STATES.ESD_SELECTED]: {CONFIG: {}, DATA: []},
+	[STATES.BOTS_SELECTED]: {CONFIG: {}, DATA: []},
 };
 
 const newEntityHandlers = {
@@ -37,6 +42,7 @@ const newEntityHandlers = {
 	flows: FLOWS_MENU_CONFIG,
 	permsets: PERMSETS_MENU_CONFIG,
 	labels: LABELS_MENU_CONFIG,
+	esd: ESD_MENU_CONFIG
 };
 
 class AutocompleteManager {
