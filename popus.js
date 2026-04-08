@@ -18,6 +18,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 		const autocompleteManager = new AutocompleteManager(objectInput, autocompleteDropdown);
 		objectInput.addEventListener('input', e => autocompleteManager.handleAutocomplete(e));
+		objectInput.addEventListener('keydown', e => autocompleteManager.handleKeydown(e));
 
 		const guideCodes = document.querySelectorAll('.guide-first-level');
 		setupGuideCodeClickListeners(guideCodes, objectInput);

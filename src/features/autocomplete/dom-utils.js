@@ -2,12 +2,18 @@ export function renderSuggestions(items, dropdownElement, inputElement, config) 
 	dropdownElement.innerHTML = '';
 	dropdownElement.classList.add('is-hidden');
 	dropdownElement.style.display = 'none';
+	dropdownElement.dataset.listType = 'suggestion';
 
 	if (items.length === 0) return;
 
-	items.slice(0, 10).forEach(item => {
+	items.slice(0, 10).forEach((item, index) => {
 		const suggestionEl = document.createElement('div');
 		suggestionEl.classList.add('autocomplete-item', 'is-clickable');
+		suggestionEl.id = `autocomplete-suggestion-${index}`;
+		suggestionEl.dataset.itemType = 'suggestion';
+		suggestionEl.dataset.itemIndex = String(index);
+		suggestionEl.setAttribute('role', 'option');
+		suggestionEl.setAttribute('aria-selected', 'false');
 		suggestionEl.innerHTML = config.renderItem(item);
 
 		suggestionEl.addEventListener('click', () => {
@@ -24,6 +30,7 @@ export function renderSuggestions(items, dropdownElement, inputElement, config) 
 
 export function renderActions(item, dropdownElement, inputElement, actions, config) {
 	dropdownElement.innerHTML = '';
+	dropdownElement.dataset.listType = 'action';
 
 	const normalizedActionTerm = (config.actionTerm || '').toLowerCase();
 	const filteredActions = actions.filter(action => {
@@ -41,9 +48,14 @@ export function renderActions(item, dropdownElement, inputElement, actions, conf
 		return;
 	}
 
-	filteredActions.forEach(action => {
+	filteredActions.forEach((action, index) => {
 		const actionEl = document.createElement('div');
 		actionEl.classList.add('autocomplete-item', 'is-clickable');
+		actionEl.id = `autocomplete-action-${index}`;
+		actionEl.dataset.itemType = 'action';
+		actionEl.dataset.itemIndex = String(index);
+		actionEl.setAttribute('role', 'option');
+		actionEl.setAttribute('aria-selected', 'false');
 		actionEl.innerHTML = `
 			<strong>${action.name}</strong>
 			<small>${action.description}</small>

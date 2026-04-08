@@ -45,6 +45,13 @@ const newEntityHandlers = {
 	esd: ESD_MENU_CONFIG
 };
 
+const KEYBOARD_KEYS = {
+	ARROW_DOWN: 'ArrowDown',
+	ARROW_UP: 'ArrowUp',
+	ENTER: 'Enter',
+	ESCAPE: 'Escape',
+};
+
 export function parseCommandInput(rawInput) {
 	const normalizedInput = rawInput.trim().toLowerCase();
 	const segments = normalizedInput.split('.');
@@ -62,11 +69,43 @@ export function parseCommandInput(rawInput) {
 	};
 }
 
+export function getNextActiveIndex(currentIndex, itemCount, direction) {
+	if (itemCount <= 0) {
+		return -1;
+	}
+
+	if (direction === KEYBOARD_KEYS.ARROW_DOWN) {
+		if (currentIndex < 0) {
+			return 0;
+		}
+
+		return (currentIndex + 1) % itemCount;
+	}
+
+	if (direction === KEYBOARD_KEYS.ARROW_UP) {
+		if (currentIndex < 0) {
+			return itemCount - 1;
+		}
+
+		return (currentIndex - 1 + itemCount) % itemCount;
+	}
+
+	return currentIndex;
+}
+
 class AutocompleteManager {
 	constructor(inputElement, dropdownElement) {
 		this.inputElement = inputElement;
 		this.dropdownElement = dropdownElement;
 		this.currentState = STATES.INITIAL;
+		this.activeIndices = {
+			suggestion: -1,
+			action: -1,
+		};
+
+		this.dropdownElement.setAttribute('role', 'listbox');
+		this.inputElement.setAttribute('aria-controls', this.dropdownElement.id);
+		this.inputElement.setAttribute('aria-activedescendant', '');
 	}
 
 	async handleAutocomplete(e) {
@@ -93,6 +132,74 @@ class AutocompleteManager {
 			ErrorHandler.handle(error, error.message || 'Autocomplete error');
 			this.resetAutocomplete();
 		}
+	}
+
+	handleKeydown(e) {
+		const supportedKey = Object.values(KEYBOARD_KEYS).includes(e.key);
+		if (!supportedKey) {
+			return;
+		}
+
+		if (e.key === KEYBOARD_KEYS.ESCAPE) {
+			e.preventDefault();
+			this.resetAutocomplete();
+			return;
+		}
+
+		const clickableItems = this.getClickableItems();
+		if (clickableItems.length === 0) {
+			return;
+		}
+
+		const listType = clickableItems[0]?.dataset?.itemType || 'suggestion';
+		const currentIndex = this.activeIndices[listType] ?? -1;
+
+		if (e.key === KEYBOARD_KEYS.ARROW_DOWN || e.key === KEYBOARD_KEYS.ARROW_UP) {
+			e.preventDefault();
+			const nextIndex = getNextActiveIndex(currentIndex, clickableItems.length, e.key);
+			this.setActiveItem(listType, nextIndex);
+			return;
+		}
+
+		if (e.key === KEYBOARD_KEYS.ENTER) {
+			const highlightedIndex = this.activeIndices[listType];
+			if (highlightedIndex >= 0 && highlightedIndex < clickableItems.length) {
+				e.preventDefault();
+				clickableItems[highlightedIndex].click();
+			}
+		}
+	}
+
+	getClickableItems() {
+		return Array.from(this.dropdownElement.querySelectorAll('.autocomplete-item.is-clickable'));
+	}
+
+	setActiveItem(listType, index) {
+		const clickableItems = this.getClickableItems();
+		clickableItems.forEach(item => {
+			item.classList.remove('is-active');
+			item.setAttribute('aria-selected', 'false');
+		});
+
+		if (index < 0 || index >= clickableItems.length) {
+			this.activeIndices[listType] = -1;
+			this.inputElement.setAttribute('aria-activedescendant', '');
+			return;
+		}
+
+		const activeItem = clickableItems[index];
+		activeItem.classList.add('is-active');
+		activeItem.setAttribute('aria-selected', 'true');
+		this.inputElement.setAttribute('aria-activedescendant', activeItem.id || '');
+		this.activeIndices[listType] = index;
+	}
+
+	resetActiveIndices() {
+		this.activeIndices = {
+			suggestion: -1,
+			action: -1,
+		};
+		this.inputElement.setAttribute('aria-activedescendant', '');
 	}
 
 	async handleInputText(input) {
@@ -147,6 +254,7 @@ class AutocompleteManager {
 
 		if (exactMatchItem && (endsWithDot || actionTerm)) {
 			NavigatorService.renderItemActions(exactMatchItem, this.dropdownElement, this.inputElement, selectedEntity, actionTerm);
+			this.resetActiveIndices();
 			return;
 		}
 
@@ -157,6 +265,7 @@ class AutocompleteManager {
 
 		// Render suggestions
 		await NavigatorService.renderSuggestions(filteredItems, this.dropdownElement, this.inputElement, selectedEntity);
+		this.resetActiveIndices();
 	}
 
 	resetAutocomplete() {
@@ -164,12 +273,14 @@ class AutocompleteManager {
 		this.dropdownElement.classList.add('is-hidden');
 		this.dropdownElement.style.display = 'none';
 		this.dropdownElement.innerHTML = '';
+		this.resetActiveIndices();
 	}
 
 	renderStatusMessage(message) {
 		this.dropdownElement.innerHTML = `<div class="autocomplete-item">${message}</div>`;
 		this.dropdownElement.classList.remove('is-hidden');
 		this.dropdownElement.style.display = 'block';
+		this.resetActiveIndices();
 	}
 
 	static async queryWithErrorHandling(apiCall, errorMessage) {

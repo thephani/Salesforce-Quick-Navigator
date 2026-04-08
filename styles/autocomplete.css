@@ -52,3 +52,9 @@
 .autocomplete-item:hover {
 	background-color: rgba(25, 113, 194, 0.06);
 }
+
+.autocomplete-item.is-active {
+	background-color: rgba(25, 113, 194, 0.12);
+	outline: 2px solid rgba(25, 113, 194, 0.35);
+	outline-offset: -2px;
+}
