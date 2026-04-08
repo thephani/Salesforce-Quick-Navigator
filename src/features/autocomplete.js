@@ -45,18 +45,34 @@ const newEntityHandlers = {
 	esd: ESD_MENU_CONFIG
 };
 
+export function parseCommandInput(rawInput) {
+	const normalizedInput = rawInput.trim().toLowerCase();
+	const segments = normalizedInput.split('.');
+	const entityKey = segments[0] || '';
+
+	if (!entityKey || !Object.hasOwn(newEntityHandlers, entityKey)) {
+		return null;
+	}
+
+	return {
+		entityKey,
+		searchTerm: segments[1] || '',
+		actionTerm: segments.slice(2).join('.'),
+		endsWithDot: normalizedInput.endsWith('.'),
+	};
+}
+
 class AutocompleteManager {
 	constructor(inputElement, dropdownElement) {
 		this.inputElement = inputElement;
 		this.dropdownElement = dropdownElement;
 		this.currentState = STATES.INITIAL;
-		this.selectedItem = null;
-		this.debounceTimer = null;
 	}
 
 	async handleAutocomplete(e) {
 		console.log('Autocomplete triggered:', e.target.value);
 		const input = e.target.value.toLowerCase().trim();
+		ErrorHandler.clear();
 
 		// Reset if input is empty
 		if (input.length === 0) {
@@ -74,76 +90,86 @@ class AutocompleteManager {
 			}
 		} catch (error) {
 			console.error('Autocomplete error:', error);
-			document.getElementById('error').textContent = error.message;
+			ErrorHandler.handle(error, error.message || 'Autocomplete error');
 			this.resetAutocomplete();
 		}
 	}
 
 	async handleInputText(input) {
 		console.log('[STATE_STORE]', STATE_STORE);
-		const session = await SessionManager.retrieveSession();
 		input = input.toLowerCase().trim();
 		console.log('Input:', input);
 
-		// Determine entity type
-		const matchedEntity = Object.keys(newEntityHandlers).find(type => {
-			console.log('type', type);
-			type = type.toLowerCase() + '.';
-			return input.includes(type);
-		});
-		console.log('Matched entity:', matchedEntity, newEntityHandlers[matchedEntity]);
-		const SELECTED_ENTITY = newEntityHandlers[matchedEntity];
-		this.currentState = matchedEntity.toUpperCase() + '_SELECTED';
-		console.log('Current state set to:', this.currentState, STATE_STORE[this.currentState]);
-
-		console.log('Selected entity:', SELECTED_ENTITY.filterKey);
-		if (!matchedEntity) {
-			console.log('Input not found');
+		const parsedCommand = parseCommandInput(input);
+		if (!parsedCommand) {
+			console.log('Input does not contain a valid entity prefix');
+			this.currentState = STATES.INITIAL;
+			this.renderStatusMessage('Start with a command like Objects. or Profiles.');
 			return;
 		}
 
-		STATE_STORE[this.currentState].CONFIG = SELECTED_ENTITY;
+		const {entityKey, searchTerm, actionTerm, endsWithDot} = parsedCommand;
+		const selectedEntity = newEntityHandlers[entityKey];
+		this.currentState = entityKey.toUpperCase() + '_SELECTED';
+		console.log('Matched entity:', entityKey, selectedEntity);
+		console.log('Current state set to:', this.currentState, STATE_STORE[this.currentState]);
+		console.log('Selected entity:', selectedEntity.filterKey);
+		console.log('Parsed action term:', actionTerm);
 
-		// Remove entity prefix from input
-		const modifiedInput = input.replace(`${matchedEntity}.`, '');
+		this.renderStatusMessage('Loading...');
+		const session = await SessionManager.retrieveSession();
+		STATE_STORE[this.currentState].CONFIG = selectedEntity;
 
 		// Fetch available items
 		let data = [];
 		if (STATE_STORE[this.currentState]?.DATA?.length > 0) {
-			console.log(`Using cached ${matchedEntity}:, STATE_STORE[this.currentState]`);
+			console.log(`Using cached ${entityKey}:, STATE_STORE[this.currentState]`);
 			data = STATE_STORE[this.currentState].DATA;
 		} else {
-			data = await NavigatorService.queryMetadata(session, SELECTED_ENTITY);
+			data = await NavigatorService.queryMetadata(session, selectedEntity);
 			STATE_STORE[this.currentState].DATA = data;
 		}
 
 		// Filter items based on input
 		const filteredItems = data.filter(item =>
-			SELECTED_ENTITY.filterKey.some(key => {
-				return item[key]?.toLowerCase()?.includes(modifiedInput);
+			selectedEntity.filterKey.some(key => {
+				return item[key]?.toLowerCase()?.includes(searchTerm);
 			})
 		);
 
-		console.log(`Filtered ${matchedEntity}:`, filteredItems);
+		console.log(`Filtered ${entityKey}:`, filteredItems);
 		console.log('selected state:', this.currentState, STATE_STORE[this.currentState]);
 
-		// Render suggestions
-		await NavigatorService.renderSuggestions(filteredItems, this.dropdownElement, this.inputElement, SELECTED_ENTITY);
-	}
+		const exactMatchItem = data.find(item => {
+			const identifier = selectedEntity.getItemIdentifier(item)?.toLowerCase?.();
+			return identifier === searchTerm;
+		});
 
-	handleActionAutocomplete(input) {
-		console.log('Handling action autocomplete for input:', input);
-		// If input changes after object selection, reset
-		if (!input.includes('.')) {
-			this.resetAutocomplete();
-			console.log('Input does not contain a dot, resetting autocomplete');
+		if (exactMatchItem && (endsWithDot || actionTerm)) {
+			NavigatorService.renderItemActions(exactMatchItem, this.dropdownElement, this.inputElement, selectedEntity, actionTerm);
+			return;
 		}
+
+		if (filteredItems.length === 0) {
+			this.renderStatusMessage(`No matches found for ${selectedEntity.prefix}.`);
+			return;
+		}
+
+		// Render suggestions
+		await NavigatorService.renderSuggestions(filteredItems, this.dropdownElement, this.inputElement, selectedEntity);
 	}
 
 	resetAutocomplete() {
-		this.currentState = 'INITIAL';
+		this.currentState = STATES.INITIAL;
+		this.dropdownElement.classList.add('is-hidden');
 		this.dropdownElement.style.display = 'none';
 		this.dropdownElement.innerHTML = '';
+	}
+
+	renderStatusMessage(message) {
+		this.dropdownElement.innerHTML = `<div class="autocomplete-item">${message}</div>`;
+		this.dropdownElement.classList.remove('is-hidden');
+		this.dropdownElement.style.display = 'block';
 	}
 
 	static async queryWithErrorHandling(apiCall, errorMessage) {

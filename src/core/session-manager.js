@@ -1,54 +1,50 @@
+import DomainValidator from '../utils/domain-validator.js';
+
 class SessionManager {
-    static async retrieveSession() {
-        return new Promise((resolve, reject) => {
-            chrome.tabs.query({active: true, currentWindow: true}, tabs => {
-                if (tabs.length === 0) {
-                    reject(new Error('No active tab found'));
-                    return;
-                }
+	static async retrieveSession() {
+		return new Promise((resolve, reject) => {
+			chrome.tabs.query({active: true, currentWindow: true}, tabs => {
+				if (tabs.length === 0) {
+					reject(new Error('No active tab found'));
+					return;
+				}
 
-                const activeTab = tabs[0];
-                const url = new URL(activeTab.url);
+				const activeTab = tabs[0];
+				let url;
+				try {
+					url = new URL(activeTab.url);
+				} catch (error) {
+					reject(new Error('Unable to read the active tab URL'));
+					return;
+				}
 
-                // Validate Salesforce Host
-                if (!this.isValidSalesforceDomain(url.hostname)) {
-                    reject(new Error('Not on a Salesforce page'));
-                    return;
-                }
+				if (!DomainValidator.isSalesforceHostname(url.hostname)) {
+					reject(new Error('Not on a Salesforce page'));
+					return;
+				}
 
-                // Request Session
-                chrome.runtime.sendMessage(
-                    {
-                        message: 'getSession',
-                        sfHost: url.hostname,
-                    },
-                    session => {
-                        if (chrome.runtime.lastError) {
-                            reject(chrome.runtime.lastError);
-                            return;
-                        }
+				chrome.runtime.sendMessage(
+					{
+						message: 'getSession',
+						sfHost: url.hostname,
+					},
+					session => {
+						if (chrome.runtime.lastError) {
+							reject(chrome.runtime.lastError);
+							return;
+						}
 
-                        if (!session) {
-                            reject(new Error('No valid session found'));
-                            return;
-                        }
+						if (!session) {
+							reject(new Error('No valid session found'));
+							return;
+						}
 
-                        resolve(session);
-                    }
-                );
-            });
-        });
-    }
-
-    static isValidSalesforceDomain(hostname) {
-        const validDomains = [
-            '.salesforce.com', 
-            '.salesforce-setup.com', 
-            '.my.salesforce.com', 
-            '.lightning.force.com'
-        ];
-        return validDomains.some(domain => hostname.includes(domain));
-    }
+						resolve(session);
+					}
+				);
+			});
+		});
+	}
 }
 
 export default SessionManager;

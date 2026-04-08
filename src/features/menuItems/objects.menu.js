@@ -18,14 +18,14 @@ export const OBJECTS_MENU_CONFIG = {
 			})),
 	urlConfig: (session, object, action) => {
 		const baseUrl = 'https://' + session.hostname.replace('.my.salesforce.com', '.my.salesforce-setup.com') + '/lightning';
-		if (action === 'TAB') {
+		if (action === 'tab') {
 			return `${baseUrl}/o/${object.apiName}/list`;
-		} else {
-			return `${baseUrl}/setup/ObjectManager/${object.apiName}/${action}/view`;
 		}
+
+		return `${baseUrl}/setup/ObjectManager/${object.apiName}/${action}/view`;
 	},
 	actions: [
-		{code: 'TAB', name: 'Records Tab', description: 'Navigate to Records Tab or List View'},
+		{code: 'tab', name: 'Records Tab', description: 'Navigate to Records Tab or List View'},
 		{code: 'Details', name: 'Details', description: 'Object Details'},
 		{code: 'FieldsAndRelationships', name: 'Fields', description: 'Fields & Relationships'},
 		{code: 'RecordTypes', name: 'Record Types', description: 'Object Record Types'},

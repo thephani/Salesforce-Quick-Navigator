@@ -19,6 +19,11 @@ export const PROFILES_MENU_CONFIG = {
       `,
 	urlConfig: (session, profile, action) => {
 		const baseUrl = `https://${session.fullHostname}/lightning/setup`;
+
+		if (action === 'assignUsers') {
+			return `https://${session.fullHostname}/005?id=${profile.id}&isUserEntityOverride=1&SetupNode=EnhancedProfiles`;
+		}
+
 		return `${baseUrl}/EnhancedProfiles/page?address=%2F${profile.id}%3Fs%3D${action}`;
 	},
 	getItemIdentifier: profile => profile.name,

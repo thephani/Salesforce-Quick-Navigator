@@ -49,10 +49,11 @@ class NavigatorService {
 		renderSuggestions(items, dropdownElement, inputElement, fullConfig);
 	}
 
-	static renderItemActions(item, dropdownElement, inputElement, config) {
+	static renderItemActions(item, dropdownElement, inputElement, config, actionTerm = '') {
 		const actionConfig = {
 			prefix: config.prefix,
 			getItemIdentifier: config.getItemIdentifier,
+			actionTerm,
 			navigate: (item, action) => NavigatorService.navigateToItem(item, action, config.urlConfig),
 		};
 

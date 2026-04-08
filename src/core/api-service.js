@@ -27,7 +27,7 @@ class SalesforceApiService {
 
 		try {
 			const response = await fetch(url, config);
-			const data = await response.json();
+			let data = await response.json();
 
 			if (!response.ok) {
 				throw new Error(`API call failed: ${response.status} ${response.statusText} - ${data?.message || 'Unknown error'}`);
@@ -35,9 +35,10 @@ class SalesforceApiService {
 
 			// Handle pagination if nextRecordsUrl exists
 			if (data.nextRecordsUrl) {
-				const nextUrl = data.nextRecordsUrl.startsWith('/') ? `https://${this.session.hostname}${data.nextRecordsUrl}` : data.nextRecordsUrl;
-
-				const nextData = await this.invokeREST(nextUrl.replace(this.baseUrl + '/', ''), method, body);
+				const nextEndpoint = data.nextRecordsUrl.startsWith('/')
+					? data.nextRecordsUrl.replace('/services/data/' + SalesforceApiService.API_VERSION + '/', '')
+					: data.nextRecordsUrl.replace(this.baseUrl + '/', '');
+				const nextData = await this.invokeREST(nextEndpoint, method, body);
 
 				// Combine records
 				if (Array.isArray(data.records) && Array.isArray(nextData.records)) {

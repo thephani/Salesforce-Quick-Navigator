@@ -17,17 +17,24 @@ export const FLOWS_MENU_CONFIG = {
 					`,
 	urlConfig: (session, flow, action) => {
 		const baseUrl = `https://${session.hostname}`;
-		if (action === 'Flow') {
+		if (action === 'builder') {
 			return `${baseUrl}/builder_platform_interaction/flowBuilder.app?flowDefId=${flow.id}`;
-		} else if (action === 'Debug') {
+		}
+
+		if (action === 'debug') {
+			if (!flow.activeId) {
+				return `${baseUrl}/lightning/setup/Flows/page?address=%2F${flow.id}%3F`;
+			}
+
 			return `${baseUrl}/flow/${flow.label}/${flow.activeId}?flow__debug=true`;
 		}
+
 		return `${baseUrl}/lightning/setup/Flows/page?address=%2F${flow.id}%3F`;
 	},
 
 	actions: [
-		{code: 'Flow', name: 'Flow Builder', description: 'Open Flow Builder'},
-		{code: 'Debug', name: 'Flow Debugger', description: 'Open Flow Debugger'},
-		{code: 'FlowVersions', name: 'Flow Versions', description: 'Open Flow Versions'},
+		{code: 'builder', name: 'Flow Builder', description: 'Open Flow Builder'},
+		{code: 'debug', name: 'Flow Debugger', description: 'Open Flow Debugger'},
+		{code: 'versions', name: 'Flow Versions', description: 'Open Flow Versions'},
 	],
 };

@@ -24,6 +24,6 @@ export const LABELS_MENU_CONFIG = {
 	},
 	actions: [
 		{code: 'view', name: 'View Label', description: 'Open Label Details'},
-		{code: 'Edit', name: 'Edit Label', description: 'Edit Label Details'},
+		{code: 'edit', name: 'Edit Label', description: 'Edit Label Details'},
 	],
 };

@@ -1,0 +1,14 @@
+{
+  "name": "salesforce-quick-navigator",
+  "version": "7.2.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node --test",
+    "check:syntax": "node --experimental-default-type=module --check background.js && node --experimental-default-type=module --check popus.js && node --experimental-default-type=module --check src/core/api-service.js && node --experimental-default-type=module --check src/core/session-manager.js && node --experimental-default-type=module --check src/features/autocomplete.js && node --experimental-default-type=module --check src/features/navigator.service.js && node --experimental-default-type=module --check src/utils/domain-validator.js && node --experimental-default-type=module --check src/utils/error-handler.js",
+    "lint": "eslint ."
+  },
+  "devDependencies": {
+    "eslint": "^9.24.0"
+  }
+}

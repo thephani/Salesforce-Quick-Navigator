@@ -1,75 +1,60 @@
-# Salesforce Quick Nav - Privacy Policy
+# Salesforce Quick Navigator
 
-## 1. Introduction
+Chrome extension for jumping to Salesforce setup pages and metadata screens with short commands such as `Objects.Account.` or `Profiles.System Administrator.`.
 
-Salesforce Quick Nav ("the Extension") is committed to protecting your privacy. This Privacy Policy explains how we handle information when you use our Chrome Extension.
+## Current command flow
 
-## 2. Information Collection and Use
+- `Objects.<object>.`
+- `Profiles.<profile>.`
+- `PermissionSets.<permset>.`
+- `Flows.<flow>.`
+- `Apps.<connected app>.`
+- `Labels.<label>.`
+- `ESD.<deployment>.`
 
-### 2.1 No Personal Data Collection
-- The Extension does not collect, store, or transmit any personal user data
-- No personally identifiable information (PII) is gathered
-- No user activity is logged or tracked
+Typing the entity prefix shows matching records. Typing a trailing `.` after an exact match opens the available action list for that item.
 
-### 2.2 Chrome Tab Permissions
-- The Extension only accesses active Salesforce.com tabs
-- Permission is used solely for:
-  - Reading current Salesforce domain
-  - Navigating to specific setup pages
-- No access to tab content outside of Salesforce domains
+## Project structure
 
-## 3. Permissions Explanation
+- [`popup.html`](popup.html): popup shell
+- [`popus.js`](popus.js): popup bootstrap
+- [`background.js`](background.js): cookie-backed session lookup
+- [`src/features/autocomplete.js`](src/features/autocomplete.js): command parsing and suggestion flow
+- [`src/features/menuItems`](src/features/menuItems): entity-specific query and navigation config
+- [`src/core/api-service.js`](src/core/api-service.js): Salesforce REST/Tooling access
+- [`src/utils/domain-validator.js`](src/utils/domain-validator.js): shared domain and cookie-host validation
 
-### 3.1 activeTab Permission
-- Used to interact with the current browser tab
-- Enables navigation to Salesforce setup pages
-- Temporary and limited to user-initiated actions
+## Local development
 
-## 4. Data Security
+1. Load the extension as unpacked in Chrome from this repository root.
+2. Open a Salesforce tab.
+3. Open the extension popup and type commands like `Objects.Case.`.
 
-### 4.1 Local Execution
-- All functionality executed locally in the browser
-- No remote code execution
-- No external data transmission
+## Tooling
 
-## 5. User Consent
+- `npm test`: runs the small Node test suite
+- `npm run check:syntax`: syntax-checks the main JS modules
+- `npm run lint`: runs ESLint
 
-### 5.1 Installation Consent
-- By installing the extension, you agree to these terms
-- Users can uninstall at any time
+## Permissions
 
-### 5.2 No Automatic Updates
-- Manual user intervention required for updates
-- No background data syncing
+- `cookies`: reads the Salesforce `sid` cookie for the active org host
+- `tabs`: inspects the active tab URL to determine the current Salesforce domain
+- `storage`: stores session data in extension session storage
 
-## 6. Third-Party Services
+## Notes
 
-### 6.1 No Third-Party Integrations
-- Extension operates independently
-- No analytics or tracking services used
-- No data shared with external parties
+- The background worker is an ES module in Manifest V3.
+- Command parsing is case-insensitive.
+- Action routing still depends on Salesforce URL stability, so new entities and actions should be validated against a real org before release.
 
-## 7. Changes to Privacy Policy
+## Roadmap
 
-- Policy may be updated periodically
-- Users advised to review periodically
-- Significant changes will be communicated
+- richer action autocomplete after the second dot
+- keyboard navigation in suggestion lists
+- recent commands and pinned shortcuts
+- support for more metadata targets like Apex classes, queues, and custom metadata types
 
-## 8. Compliance
+## Privacy
 
-### 8.1 Regulatory Compliance
-- Adheres to Chrome Web Store policies
-- Follows web extension best practices
-- Transparent about extension capabilities
-
-## 9. Disclaimer
-
-The extension is provided "as is" without warranties.
-Users are responsible for their configuration actions.
-
----
-
-Last Updated: 03/15/2025
-Version: 1.0.0
-
-© thePhani.com - All Rights Reserved
+The privacy policy lives in [`PRIVACY.md`](PRIVACY.md).
