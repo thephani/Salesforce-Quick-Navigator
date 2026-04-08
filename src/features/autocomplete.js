@@ -1,12 +1,15 @@
 import SessionManager from '../core/session-manager.js';
 import ErrorHandler from '../utils/error-handler.js';
+import {APEX_CLASSES_MENU_CONFIG} from './menuItems/apexclasses.menu.js';
 import {APPS_MENU_CONFIG} from './menuItems/apps.menu.js';
-import { ESD_MENU_CONFIG } from './menuItems/esd.menu.js';
+import {CMDT_MENU_CONFIG} from './menuItems/cmdt.menu.js';
+import {ESD_MENU_CONFIG} from './menuItems/esd.menu.js';
 import {FLOWS_MENU_CONFIG} from './menuItems/flows.menu.js';
 import { LABELS_MENU_CONFIG } from './menuItems/labels.menu.js';
 import {OBJECTS_MENU_CONFIG} from './menuItems/objects.menu.js';
 import {PERMSETS_MENU_CONFIG} from './menuItems/permsets.menu.js';
 import {PROFILES_MENU_CONFIG} from './menuItems/profiles.menu.js';
+import {QUEUES_MENU_CONFIG} from './menuItems/queues.menu.js';
 import NavigatorService from './navigator.service.js';
 
 // Define constants for better maintainability
@@ -19,6 +22,9 @@ const STATES = {
 	LABEL_SELECTED: 'LABELS_SELECTED',
 	PERMSET_SELECTED: 'PERMSETS_SELECTED',
 	ESD_SELECTED: 'ESD_SELECTED',
+	APEXCLASSES_SELECTED: 'APEXCLASSES_SELECTED',
+	QUEUES_SELECTED: 'QUEUES_SELECTED',
+	CMDT_SELECTED: 'CMDT_SELECTED',
 	BOTS_SELECTED: 'BOTS_SELECTED'
 };
 
@@ -32,6 +38,9 @@ const STATE_STORE = {
 	[STATES.LABEL_SELECTED]: {CONFIG: {}, DATA: []},
 	[STATES.PERMSET_SELECTED]: {CONFIG: {}, DATA: []},
 	[STATES.ESD_SELECTED]: {CONFIG: {}, DATA: []},
+	[STATES.APEXCLASSES_SELECTED]: {CONFIG: {}, DATA: []},
+	[STATES.QUEUES_SELECTED]: {CONFIG: {}, DATA: []},
+	[STATES.CMDT_SELECTED]: {CONFIG: {}, DATA: []},
 	[STATES.BOTS_SELECTED]: {CONFIG: {}, DATA: []},
 };
 
@@ -42,7 +51,10 @@ const newEntityHandlers = {
 	flows: FLOWS_MENU_CONFIG,
 	permsets: PERMSETS_MENU_CONFIG,
 	labels: LABELS_MENU_CONFIG,
-	esd: ESD_MENU_CONFIG
+	esd: ESD_MENU_CONFIG,
+	apexclasses: APEX_CLASSES_MENU_CONFIG,
+	queues: QUEUES_MENU_CONFIG,
+	cmdt: CMDT_MENU_CONFIG
 };
 
 export function parseCommandInput(rawInput) {
@@ -104,7 +116,7 @@ class AutocompleteManager {
 		if (!parsedCommand) {
 			console.log('Input does not contain a valid entity prefix');
 			this.currentState = STATES.INITIAL;
-			this.renderStatusMessage('Start with a command like Objects. or Profiles.');
+			this.renderStatusMessage('Start with a command like Objects., Profiles., ApexClasses., Queues., or CMDT.');
 			return;
 		}
 

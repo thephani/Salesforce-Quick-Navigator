@@ -23,6 +23,39 @@ test('parseCommandInput tracks trailing dot for action menus', () => {
 	assert.equal(parsed.endsWithDot, true);
 });
 
+test('parseCommandInput supports ApexClasses command flow', () => {
+	const parsed = parseCommandInput('ApexClasses.CaseRouter.security');
+
+	assert.deepEqual(parsed, {
+		entityKey: 'apexclasses',
+		searchTerm: 'caserouter',
+		actionTerm: 'security',
+		endsWithDot: false,
+	});
+});
+
+test('parseCommandInput supports Queues command flow with spaces', () => {
+	const parsed = parseCommandInput('Queues.Case Queue.members');
+
+	assert.deepEqual(parsed, {
+		entityKey: 'queues',
+		searchTerm: 'case queue',
+		actionTerm: 'members',
+		endsWithDot: false,
+	});
+});
+
+test('parseCommandInput supports CMDT command flow and trailing dot', () => {
+	const parsed = parseCommandInput('CMDT.Invoice_Config__mdt.');
+
+	assert.deepEqual(parsed, {
+		entityKey: 'cmdt',
+		searchTerm: 'invoice_config__mdt',
+		actionTerm: '',
+		endsWithDot: true,
+	});
+});
+
 test('parseCommandInput returns null for unsupported prefixes', () => {
 	assert.equal(parseCommandInput('foo.bar'), null);
 });
