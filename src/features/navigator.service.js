@@ -2,6 +2,7 @@ import SalesforceApiService from '../core/api-service.js';
 import SessionManager from '../core/session-manager.js';
 import ErrorHandler from '../utils/error-handler.js';
 import AutocompleteManager from './autocomplete.js';
+import CommandHistoryService from '../core/command-history.js';
 import {renderActions, renderSuggestions} from './autocomplete/dom-utils.js';
 
 class NavigatorService {
@@ -22,7 +23,7 @@ class NavigatorService {
 		}, config.errorMessage || 'Error querying metadata');
 	}
 
-	static async navigateToItem(item, action, urlConfig) {
+	static async navigateToItem(item, action, urlConfig, commandInput = '') {
 		console.log('Navigating to item:', item, action);
 		try {
 			const session = await SessionManager.retrieveSession();
@@ -30,7 +31,8 @@ class NavigatorService {
 
 			navigateUrl = urlConfig(session, item, action);
 
-			chrome.tabs.create({url: navigateUrl});
+			await chrome.tabs.create({url: navigateUrl});
+			await CommandHistoryService.addRecent(commandInput);
 		} catch (error) {
 			ErrorHandler.handle(error, 'Navigation Error');
 		}
@@ -43,7 +45,7 @@ class NavigatorService {
 			renderItem: config.renderItem,
 			getItemIdentifier: config.getItemIdentifier,
 			renderActions: (item, dropdown, input) => NavigatorService.renderItemActions(item, dropdown, input, config),
-			navigate: (item, action) => NavigatorService.navigateToItem(item, action, config.urlConfig),
+			navigate: (item, action, commandInput) => NavigatorService.navigateToItem(item, action, config.urlConfig, commandInput),
 		};
 
 		renderSuggestions(items, dropdownElement, inputElement, fullConfig);
@@ -54,7 +56,7 @@ class NavigatorService {
 			prefix: config.prefix,
 			getItemIdentifier: config.getItemIdentifier,
 			actionTerm,
-			navigate: (item, action) => NavigatorService.navigateToItem(item, action, config.urlConfig),
+			navigate: (item, action, commandInput) => NavigatorService.navigateToItem(item, action, config.urlConfig, commandInput),
 		};
 
 		renderActions(item, dropdownElement, inputElement, config.actions, actionConfig);

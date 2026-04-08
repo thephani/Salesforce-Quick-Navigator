@@ -320,3 +320,77 @@ body {
 	background: rgba(25, 113, 194, 0.42);
 	border-radius: 999px;
 }
+
+.history-sections {
+	display: grid;
+	grid-template-columns: 1fr;
+	gap: 10px;
+	margin-top: 4px;
+}
+
+.history-section {
+	padding: 10px 12px;
+	border-radius: 12px;
+	border: 1px solid rgba(23, 50, 77, 0.1);
+	background: rgba(255, 255, 255, 0.85);
+}
+
+.history-header h3 {
+	font-size: 0.76rem;
+	font-weight: 700;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	color: var(--color-muted);
+}
+
+.history-empty {
+	margin-top: 8px;
+	font-size: 0.78rem;
+	color: var(--color-muted);
+}
+
+.history-list {
+	list-style: none;
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	margin-top: 8px;
+}
+
+.history-item {
+	display: grid;
+	grid-template-columns: minmax(0, 1fr) auto;
+	gap: 8px;
+}
+
+.history-command-button,
+.history-pin-button {
+	border: 1px solid rgba(23, 50, 77, 0.14);
+	background: #fff;
+	border-radius: 8px;
+	padding: 6px 8px;
+	font-size: 0.78rem;
+	color: var(--color-ink);
+	cursor: pointer;
+}
+
+.history-command-button {
+	text-align: left;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.history-pin-button {
+	font-size: 0.74rem;
+	font-weight: 700;
+	color: var(--color-primary);
+}
+
+.history-command-button:hover,
+.history-pin-button:hover,
+.history-command-button:focus-visible,
+.history-pin-button:focus-visible {
+	border-color: rgba(25, 113, 194, 0.45);
+	outline: none;
+}

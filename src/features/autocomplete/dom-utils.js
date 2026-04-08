@@ -52,7 +52,7 @@ export function renderActions(item, dropdownElement, inputElement, actions, conf
 		actionEl.addEventListener('click', () => {
 			inputElement.value = `${config.prefix}.${config.getItemIdentifier(item)}.${action.code}`;
 			dropdownElement.style.display = 'none';
-			config.navigate(item, action.code);
+			config.navigate(item, action.code, inputElement.value);
 		});
 
 		dropdownElement.appendChild(actionEl);
