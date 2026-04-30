@@ -1,126 +1,153 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
 	<head>
 		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<title>Salesforce Quick Navigator</title>
 		<link rel="stylesheet" type="text/css" href="styles/popup.css" />
 		<link rel="stylesheet" type="text/css" href="styles/autocomplete.css" />
 	</head>
 	<body>
-		<div id="not-salesforce-message" class="not-salesforce-container" style="display: none">
-			<div class="message-content">
-				<h2>🚫 Salesforce Only 🚫</h2>
-				<p>This extension works only on Salesforce domains.</p>
-				<div class="domain-list">
-					<p>Supported Domains:</p>
-					<ul>
-						<li>*.salesforce.com</li>
-						<li>*.salesforce-setup.com</li>
-						<li>*.my.salesforce.com</li>
-						<li>*.lightning.force.com</li>
-					</ul>
+		<div class="app-shell">
+			<section id="not-salesforce-message" class="state-panel is-hidden" aria-live="polite">
+				<div class="state-card">
+					<p class="eyebrow">Unsupported Page</p>
+					<h1>Salesforce Only</h1>
+					<p>This extension only runs on Salesforce domains.</p>
+					<div class="domain-list">
+						<p class="domain-list-title">Supported domains</p>
+						<ul>
+							<li>*.salesforce.com</li>
+							<li>*.salesforce-setup.com</li>
+							<li>*.my.salesforce.com</li>
+							<li>*.lightning.force.com</li>
+						</ul>
+					</div>
 				</div>
+			</section>
+
+			<div class="container fade-in">
+				<main class="app-main">
+					<section class="command-panel slide-in" aria-labelledby="command-panel-title">
+						<div class="input-container">
+							<label id="command-panel-title" class="input-label" for="objectInput">Salesforce Quick Navigator</label>
+							<div class="autocomplete-container">
+								<input
+									type="text"
+									id="objectInput"
+									placeholder="Salesforce Quick Navigator"
+									autocomplete="off"
+									spellcheck="false"
+									aria-describedby="command-help"
+									aria-controls="autocompleteDropdown"
+								/>
+								<div id="autocompleteDropdown" class="autocomplete-dropdown is-hidden" role="listbox" aria-label="Command suggestions"></div>
+							</div>
+							<div class="quick-prefixes" aria-label="Command prefixes">
+								<button type="button" class="quick-prefix-button" data-prefix="Objects">Objects</button>
+								<button type="button" class="quick-prefix-button" data-prefix="Profiles">Profiles</button>
+								<button type="button" class="quick-prefix-button" data-prefix="PermSets">PermSets</button>
+								<button type="button" class="quick-prefix-button" data-prefix="Flows">Flows</button>
+								<button type="button" class="quick-prefix-button" data-prefix="Apps">Apps</button>
+								<button type="button" class="quick-prefix-button" data-prefix="Labels">Labels</button>
+								<button type="button" class="quick-prefix-button" data-prefix="ESD">ESD</button>
+							</div>
+
+							<p id="command-help" class="input-help">Choose a prefix or type a command directly.</p>
+						</div>
+
+						<details class="quick-guide-inline">
+							<summary class="quick-guide-summary">
+								<span>Quick Guide</span>
+								<small>Examples</small>
+							</summary>
+
+							<div class="guide-groups">
+								<div class="guide-group" data-prefix="Objects">
+									<h3>Objects</h3>
+									<ul class="guide-list">
+										<li><code>Case.Fields</code></li>
+										<li><code>Case.Flexi pages</code></li>
+									</ul>
+								</div>
+
+								<div class="guide-group" data-prefix="Profiles">
+									<h3>Profiles</h3>
+									<ul class="guide-list">
+										<li><code>System Administrator.SystemPermissions</code></li>
+										<li><code>System Administrator.PageAccess</code></li>
+									</ul>
+								</div>
+
+								<div class="guide-group" data-prefix="PermSets">
+									<h3>PermSets</h3>
+									<ul class="guide-list">
+										<li><code>MyPermSet.assign users</code></li>
+										<li><code>MyPermSet.ObjectsAndTabs</code></li>
+									</ul>
+								</div>
+
+								<div class="guide-group" data-prefix="Flows">
+									<h3>Flows</h3>
+									<ul class="guide-list">
+										<li><code>Case Routing.builder</code></li>
+										<li><code>Case Routing.debug</code></li>
+									</ul>
+								</div>
+
+								<div class="guide-group" data-prefix="Apps">
+									<h3>Apps</h3>
+									<ul class="guide-list">
+										<li><code>My Connected App.view</code></li>
+										<li><code>My Connected App.edit</code></li>
+									</ul>
+								</div>
+
+								<div class="guide-group" data-prefix="Labels">
+									<h3>Labels</h3>
+									<ul class="guide-list">
+										<li><code>My Label.view</code></li>
+										<li><code>My Label.edit</code></li>
+									</ul>
+								</div>
+
+								<div class="guide-group" data-prefix="ESD">
+									<h3>ESD</h3>
+									<ul class="guide-list">
+										<li><code>My Deployment.view</code></li>
+										<li><code>My Deployment.branding</code></li>
+									</ul>
+								</div>
+							</div>
+						</details>
+					</section>
+
+					<section class="status-panel" aria-live="polite">
+						<div id="error" class="error-message is-hidden" role="status"></div>
+					</section>
+
+					<section id="historyPanel" class="history-panel is-hidden" aria-labelledby="history-panel-title">
+						<div class="panel-header">
+							<h2 id="history-panel-title">Command History</h2>
+							<button id="clearHistoryBtn" class="clear-history-button" type="button" aria-label="Clear history">Clear</button>
+						</div>
+						<ul id="historyList" class="history-list"></ul>
+					</section>
+				</main>
+
+				<footer class="extension-footer">
+					<div class="footer-content">
+						<div class="copyright">© 2025 apps.thePhani.com</div>
+						<div class="feedback-link">
+							<a href="https://forms.gle/jajNzrZg9kBRnfuo7" target="_blank" rel="noreferrer" title="Provide Feedback or Report Issues">
+								Feedback & Support
+							</a>
+						</div>
+					</div>
+				</footer>
 			</div>
 		</div>
 
-		<div class="container fade-in">
-			<div class="header">
-				<h1>Salesforce Quick Navigator</h1>
-			</div>
-
-			<div class="input-container slide-in">
-				<div class="autocomplete-container">
-					<input type="text" id="objectInput" placeholder="Type Profiles. or Objects." />
-					<div id="autocompleteDropdown" class="autocomplete-dropdown" style="display: none"></div>
-				</div>
-
-				<!-- <button id="navigateBtn" class="navigate-btn">Navigate</button> -->
-			</div>
-
-			<div id="error" class="error-message" style="display: none"></div>
-			<div class="quick-guide1">
-				<div class="guide-sections">
-					<div class="guide-section">
-						<h4>Basic Navigation</h4>
-						<div class="qq-pills">
-							<button class="guide-first-level">Profiles</button>
-							<button class="guide-first-level">Objects</button>
-							<button class="guide-first-level">Flows</button>
-							<button class="guide-first-level" title="Permission Sets">PermSets</button>
-						</div>
-						<div class="qq-pills">
-							<button class="guide-first-level">Apps</button>
-							<button class="guide-first-level" title="Custom Labels">Labels</button>
-							<button class="guide-first-level" title="Embedded Service Deployments">ESD</button>
-							<!-- <button class="guide-first-level">Bots</button> -->
-							<!-- <button class="guide-first-level">PermSets</button> -->
-						</div>
-					</div>
-
-					<div class="guide-section">
-						<h4>Object Actions</h4>
-						<div class="guide-items">
-							<div class="guide-item">
-								<span class="guide-code">Object Details</span>
-								<span class="guide-description">Objects.Account.Details</span>
-							</div>
-							<div class="guide-item">
-								<span class="guide-code">Fields & Details</span>
-								<span class="guide-description">Objects.Account.Fields</span>
-							</div>
-							<div class="guide-item">
-								<span class="guide-code">Page Layouts</span>
-								<span class="guide-description">Objects.Account.PageLayouts</span>
-							</div>
-							<div class="guide-item">
-								<span class="guide-code">Record Types</span>
-								<span class="guide-description">Objects.Account.RecordTypes</span>
-							</div>
-						</div>
-					</div>
-
-					<div class="guide-section">
-						<h4>Profile Actions</h4>
-						<div class="guide-items">
-							<div class="guide-item">
-								<span class="guide-code">Object Permissions</span>
-								<span class="guide-description">Profiles.Admin.Object Settings</span>
-							</div>
-							<div class="guide-item">
-								<span class="guide-code">System Permisssions</span>
-								<span class="guide-description">Objects.Account.SystemPerm</span>
-							</div>
-							<div class="guide-item">
-								<span class="guide-code">Apex Class Access</span>
-								<span class="guide-description">Objects.Account.Fields</span>
-							</div>
-							<div class="guide-item">
-								<span class="guide-code">Visualforce Access</span>
-								<span class="guide-description">Objects.Account.PageLayouts</span>
-							</div>
-						</div>
-					</div>
-
-					<br />
-					<br />
-				</div>
-		</div>
-
-		<!-- Footer Section -->
-		<footer class="extension-footer">
-			<div class="footer-content">
-				<div class="copyright">© 2025 apps.thePhani.com</div>
-				<div class="feedback-link">
-					<a href="https://forms.gle/jajNzrZg9kBRnfuo7" target="_blank" title="Provide Feedback or Report Issues"
-						>🐞 Feedback & Support 🐞
-					</a>
-				</div>
-			</div>
-		</footer>
-
-		<!-- Module Scripts -->
-		<script type="module" src="src/core/session-manager.js"></script>
-		<script type="module" src="src/features/autocomplete.js"></script>
 		<script type="module" src="./popus.js"></script>
 	</body>
 </html>

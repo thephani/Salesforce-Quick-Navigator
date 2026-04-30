@@ -3,7 +3,7 @@ class SalesforceApiService {
 
 	constructor(session) {
 		this.session = session;
-		this.baseUrl = `https://${this.session.hostname}/services/data/${SalesforceApiService.API_VERSION}`;
+		this.baseUrl = `https://${this.session.apiHostname || this.session.hostname}/services/data/${SalesforceApiService.API_VERSION}`;
 	}
 
 	// Helper method to create headers

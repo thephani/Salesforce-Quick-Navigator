@@ -1,75 +1,120 @@
-# Salesforce Quick Nav - Privacy Policy
+# Salesforce Quick Navigator
 
-## 1. Introduction
+Salesforce Quick Navigator is a Chrome extension for jumping directly to Salesforce setup and metadata pages with short commands.
 
-Salesforce Quick Nav ("the Extension") is committed to protecting your privacy. This Privacy Policy explains how we handle information when you use our Chrome Extension.
+## Features
 
-## 2. Information Collection and Use
+- Command prefixes for Objects, Profiles, Permission Sets, Flows, Apps, Labels, and Embedded Service Deployments.
+- Autocomplete suggestions for matching metadata records.
+- Keyboard navigation in autocomplete results with Arrow Up, Arrow Down, and Enter.
+- A visible cursor on the active autocomplete option.
+- Quick prefix buttons and clickable guide examples for common commands.
+- Local command history with clear and replay actions.
+- Salesforce-domain validation before the extension UI is shown.
 
-### 2.1 No Personal Data Collection
-- The Extension does not collect, store, or transmit any personal user data
-- No personally identifiable information (PII) is gathered
-- No user activity is logged or tracked
+## Command Format
 
-### 2.2 Chrome Tab Permissions
-- The Extension only accesses active Salesforce.com tabs
-- Permission is used solely for:
-  - Reading current Salesforce domain
-  - Navigating to specific setup pages
-- No access to tab content outside of Salesforce domains
+Commands follow this shape:
 
-## 3. Permissions Explanation
+```text
+Prefix.Record.Action
+```
 
-### 3.1 activeTab Permission
-- Used to interact with the current browser tab
-- Enables navigation to Salesforce setup pages
-- Temporary and limited to user-initiated actions
+Examples:
 
-## 4. Data Security
+```text
+Objects.Case.Fields
+Profiles.System Administrator.SystemPermissions
+PermSets.MyPermSet.assign users
+Flows.Case Routing.builder
+Apps.My Connected App.view
+Labels.My Label.edit
+ESD.My Deployment.branding
+```
 
-### 4.1 Local Execution
-- All functionality executed locally in the browser
-- No remote code execution
-- No external data transmission
+## Supported Salesforce Domains
 
-## 5. User Consent
+- `*.salesforce.com`
+- `*.salesforce-setup.com`
+- `*.my.salesforce.com`
+- `*.lightning.force.com`
 
-### 5.1 Installation Consent
-- By installing the extension, you agree to these terms
-- Users can uninstall at any time
+## Release Notes
 
-### 5.2 No Automatic Updates
-- Manual user intervention required for updates
-- No background data syncing
+See [RELEASE_NOTES.md](RELEASE_NOTES.md) for the current release notes.
 
-## 6. Third-Party Services
+## Privacy Policy
 
-### 6.1 No Third-Party Integrations
-- Extension operates independently
-- No analytics or tracking services used
-- No data shared with external parties
+### 1. Introduction
 
-## 7. Changes to Privacy Policy
+Salesforce Quick Navigator ("the Extension") is committed to protecting your privacy. This Privacy Policy explains how we handle information when you use our Chrome Extension.
 
-- Policy may be updated periodically
-- Users advised to review periodically
-- Significant changes will be communicated
+### 2. Information Collection and Use
 
-## 8. Compliance
+#### 2.1 No Personal Data Collection
 
-### 8.1 Regulatory Compliance
-- Adheres to Chrome Web Store policies
-- Follows web extension best practices
-- Transparent about extension capabilities
+- The Extension does not collect, store, or transmit personal user data to external services.
+- No personally identifiable information (PII) is gathered.
+- No user activity is tracked by analytics services.
 
-## 9. Disclaimer
+#### 2.2 Chrome Tab Permissions
 
-The extension is provided "as is" without warranties.
-Users are responsible for their configuration actions.
+- The Extension only accesses active Salesforce tabs.
+- Permission is used solely for reading the current Salesforce domain and navigating to specific setup pages.
+- No access to tab content outside supported Salesforce domains is required for normal operation.
+
+### 3. Permissions Explanation
+
+#### 3.1 activeTab and tabs Permissions
+
+- Used to interact with the current browser tab and open Salesforce setup pages.
+- Limited to user-initiated extension actions.
+
+#### 3.2 storage Permission
+
+- Used to store command history locally in the browser.
+- History remains on the user's machine and can be cleared from the extension UI.
+
+#### 3.3 cookies Permission
+
+- Used only as needed to support Salesforce session-aware navigation.
+
+### 4. Data Security
+
+- Extension functionality runs locally in the browser.
+- No remote code execution is used.
+- No analytics, tracking, or external telemetry services are used.
+
+### 5. User Consent
+
+- By installing the extension, you agree to these terms.
+- Users can uninstall the extension at any time.
+
+### 6. Third-Party Services
+
+- The Extension operates independently.
+- No analytics or tracking services are used.
+- No data is shared with external parties.
+
+### 7. Changes to Privacy Policy
+
+- This policy may be updated periodically.
+- Users are advised to review it periodically.
+- Significant changes will be communicated through release notes or store listing updates.
+
+### 8. Compliance
+
+- Adheres to Chrome Web Store policies.
+- Follows web extension best practices.
+- Describes extension capabilities transparently.
+
+### 9. Disclaimer
+
+The extension is provided "as is" without warranties. Users are responsible for their Salesforce configuration actions.
 
 ---
 
-Last Updated: 03/15/2025
-Version: 1.0.0
+Last Updated: 04/30/2026  
+Version: 6.0.0
 
 © thePhani.com - All Rights Reserved

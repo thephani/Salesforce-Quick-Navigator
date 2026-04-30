@@ -29,9 +29,13 @@ class BackgroundSessionManager {
 				const currentDomain = domains[0].replace('.lightning.force.com', '.my.salesforce.com');
 				chrome.cookies.get({url: 'https://' + currentDomain, name: 'sid'}, sessionCookie => {
 					if (sessionCookie) {
+						const apiHostname = DomainValidator.getApiHostname(sfHost);
+
 						resolve({
 							key: sessionCookie.value,
-							hostname: currentDomain,
+							hostname: apiHostname,
+							apiHostname,
+							cookieHostname: currentDomain,
 							fullHostname: sfHost,
 							expires: sessionCookie.expirationDate,
 						});

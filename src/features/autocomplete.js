@@ -142,6 +142,7 @@ class AutocompleteManager {
 
 	resetAutocomplete() {
 		this.currentState = 'INITIAL';
+		this.dropdownElement.classList.add('is-hidden');
 		this.dropdownElement.style.display = 'none';
 		this.dropdownElement.innerHTML = '';
 	}
