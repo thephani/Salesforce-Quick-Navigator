@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "Salesforce Quick Navigator",
   "version": "8.0.1",
-  "description": "Salesforce Quick Navigator is a productivity tool that simplifies Object, Profile navigation with fast, shorthand commands like Emmet.",
+  "description": "A productivity tool that simplifies Object, Profile navigation with fast, shorthand commands like Emmet.",
   "permissions": [
     "cookies",
     "tabs",
