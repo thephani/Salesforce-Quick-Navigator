@@ -1,12 +1,14 @@
 export function resetAutocomplete(instance) {
 	instance.currentState = 'initial';
 	instance.selectedItem = null;
+	instance.dropdownElement.classList.add('is-hidden');
 	instance.dropdownElement.style.display = 'none';
 	instance.dropdownElement.innerHTML = '';
 }
 
 export function renderSuggestions(items, dropdownElement, inputElement, config) {
 	dropdownElement.innerHTML = '';
+	dropdownElement.classList.add('is-hidden');
 	dropdownElement.style.display = 'none';
 
 	if (items.length === 0) return;
@@ -24,6 +26,7 @@ export function renderSuggestions(items, dropdownElement, inputElement, config) 
 		dropdownElement.appendChild(suggestionEl);
 	});
 
+	dropdownElement.classList.remove('is-hidden');
 	dropdownElement.style.display = 'block';
 }
 
@@ -40,6 +43,7 @@ export function renderActions(item, dropdownElement, inputElement, actions, conf
 
 		actionEl.addEventListener('click', () => {
 			inputElement.value = `${config.prefix}.${config.getItemIdentifier(item)}.${action.code}`;
+			dropdownElement.classList.add('is-hidden');
 			dropdownElement.style.display = 'none';
 			config.navigate(item, action.code);
 		});
@@ -47,5 +51,6 @@ export function renderActions(item, dropdownElement, inputElement, actions, conf
 		dropdownElement.appendChild(actionEl);
 	});
 
+	dropdownElement.classList.remove('is-hidden');
 	dropdownElement.style.display = 'block';
 }

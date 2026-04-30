@@ -3,6 +3,7 @@ import SessionManager from '../core/session-manager.js';
 import ErrorHandler from '../utils/error-handler.js';
 import AutocompleteManager from './autocomplete.js';
 import {renderActions, renderSuggestions} from './autocomplete/dom-utils.js';
+import HistoryManager from './history-manager.js';
 
 class NavigatorService {
 	static async queryMetadata(session, config) {
@@ -22,15 +23,18 @@ class NavigatorService {
 		}, config.errorMessage || 'Error querying metadata');
 	}
 
-	static async navigateToItem(item, action, urlConfig) {
+	static async navigateToItem(item, action, urlConfig, prefix) {
 		console.log('Navigating to item:', item, action);
+
 		try {
 			const session = await SessionManager.retrieveSession();
-			let navigateUrl;
-
-			navigateUrl = urlConfig(session, item, action);
+			const navigateUrl = urlConfig(session, item, action);
 
 			chrome.tabs.create({url: navigateUrl});
+
+			const historyManager = new HistoryManager();
+			const command = `${prefix}.${item}.${action}`;
+			await historyManager.logCommand(command);
 		} catch (error) {
 			ErrorHandler.handle(error, 'Navigation Error');
 		}
@@ -43,17 +47,18 @@ class NavigatorService {
 			renderItem: config.renderItem,
 			getItemIdentifier: config.getItemIdentifier,
 			renderActions: (item, dropdown, input) => NavigatorService.renderItemActions(item, dropdown, input, config),
-			navigate: (item, action) => NavigatorService.navigateToItem(item, action, config.urlConfig),
+			navigate: (item, action) => NavigatorService.navigateToItem(item, action, config.urlConfig, config.prefix),
 		};
 
 		renderSuggestions(items, dropdownElement, inputElement, fullConfig);
 	}
 
-	static renderItemActions(item, dropdownElement, inputElement, config) {
+	static renderItemActions(item, dropdownElement, inputElement, config, actionTerm = '') {
 		const actionConfig = {
 			prefix: config.prefix,
 			getItemIdentifier: config.getItemIdentifier,
-			navigate: (item, action) => NavigatorService.navigateToItem(item, action, config.urlConfig),
+			actionTerm,
+			navigate: (item, action) => NavigatorService.navigateToItem(item, action, config.urlConfig, config.prefix),
 		};
 
 		renderActions(item, dropdownElement, inputElement, config.actions, actionConfig);
