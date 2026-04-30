@@ -74,14 +74,12 @@ class AutocompleteManager {
 			}
 		} catch (error) {
 			console.error('Autocomplete error:', error);
-			document.getElementById('error').textContent = error.message;
+			ErrorHandler.handle(error, error.message || 'Autocomplete error');
 			this.resetAutocomplete();
 		}
 	}
 
 	async handleInputText(input) {
-		console.log('[STATE_STORE]', STATE_STORE);
-		const session = await SessionManager.retrieveSession();
 		input = input.toLowerCase().trim();
 		console.log('Input:', input);
 
@@ -91,16 +89,17 @@ class AutocompleteManager {
 			type = type.toLowerCase() + '.';
 			return input.includes(type);
 		});
-		console.log('Matched entity:', matchedEntity, newEntityHandlers[matchedEntity]);
-		const SELECTED_ENTITY = newEntityHandlers[matchedEntity];
-		this.currentState = matchedEntity.toUpperCase() + '_SELECTED';
-		console.log('Current state set to:', this.currentState, STATE_STORE[this.currentState]);
-
-		console.log('Selected entity:', SELECTED_ENTITY.filterKey);
 		if (!matchedEntity) {
 			console.log('Input not found');
 			return;
 		}
+
+		console.log('Matched entity:', matchedEntity, newEntityHandlers[matchedEntity]);
+		const SELECTED_ENTITY = newEntityHandlers[matchedEntity];
+		const session = await SessionManager.retrieveSession();
+		this.currentState = matchedEntity.toUpperCase() + '_SELECTED';
+		console.log('Current state set to:', this.currentState, STATE_STORE[this.currentState]);
+		console.log('Selected entity:', SELECTED_ENTITY.filterKey);
 
 		STATE_STORE[this.currentState].CONFIG = SELECTED_ENTITY;
 

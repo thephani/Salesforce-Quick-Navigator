@@ -1,5 +1,5 @@
 class DomainValidator {
-	static SALESFORCE_DOMAINS = ['salesforce.com', 'salesforce-setup.com', 'my.salesforce.com', 'lightning.force.com'];
+	static SALESFORCE_DOMAINS = ['salesforce.com', 'salesforce-setup.com', 'my.salesforce.com', 'lightning.force.com', 'vf.force.com'];
 
 	static hasValidSuffix(hostname, domain) {
 		return hostname === domain || hostname.endsWith(`.${domain}`);
@@ -16,6 +16,14 @@ class DomainValidator {
 	static getApiHostname(hostname) {
 		if (!this.isSalesforceHostname(hostname)) {
 			return null;
+		}
+
+		if (hostname.endsWith('.sandbox.vf.force.com')) {
+			return hostname.replace(/--c\.sandbox\.vf\.force\.com$/, '.sandbox.my.salesforce.com');
+		}
+
+		if (hostname.endsWith('.vf.force.com')) {
+			return hostname.replace(/--c\.vf\.force\.com$/, '.my.salesforce.com');
 		}
 
 		return hostname

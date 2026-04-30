@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "Salesforce Quick Navigator",
-  "version": "8.0.0",
+  "version": "8.0.1",
   "description": "Salesforce Quick Navigator is a productivity tool that simplifies Object, Profile navigation with fast, shorthand commands like Emmet.",
   "permissions": [
     "cookies",
@@ -10,12 +10,21 @@
   ],
   "host_permissions": [
     "https://*.salesforce.com/*",
+    "https://*.sandbox.salesforce.com/*",
     "https://*.salesforce-setup.com/*",
+    "https://*.my.salesforce-setup.com/*",
+    "https://*.sandbox.salesforce-setup.com/*",
+    "https://*.sandbox.my.salesforce-setup.com/*",
     "https://*.my.salesforce.com/*",
-    "https://*.lightning.force.com/*"
+    "https://*.sandbox.my.salesforce.com/*",
+    "https://*.lightning.force.com/*",
+    "https://*.sandbox.lightning.force.com/*",
+    "https://*.vf.force.com/*",
+    "https://*.sandbox.vf.force.com/*"
   ],
   "background": {
-    "service_worker": "background.js"
+    "service_worker": "background.js",
+    "type": "module"
   },
   "action": {
     "default_popup": "popup.html",
