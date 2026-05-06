@@ -21,6 +21,8 @@ class BackgroundSessionManager {
 				const currentDomain = domains[0];
 				chrome.cookies.get({url: 'https://' + currentDomain, name: 'sid'}, sessionCookie => {
 					if (sessionCookie) {
+						const apiHostname = DomainValidator.getApiHostname(sfHost);
+
 						resolve({
 							key: sessionCookie.value,
 							hostname: apiHostname,
