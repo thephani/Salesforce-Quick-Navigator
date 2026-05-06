@@ -126,7 +126,7 @@ The extension is provided "as is" without warranties. Users are responsible for 
 
 ---
 
-Last Updated: 04/30/2026  
-Version: 8.0.1
+Last Updated: 05/06/2026  
+Version: 8.1.1
 
 © thePhani.com - All Rights Reserved
