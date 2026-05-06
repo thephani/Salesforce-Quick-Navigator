@@ -11,6 +11,8 @@ Salesforce Quick Navigator is a Chrome extension for jumping directly to Salesfo
 - Quick prefix buttons and clickable guide examples for common commands.
 - Local command history with clear and replay actions.
 - Salesforce-domain validation before the extension UI is shown.
+- Support for production, sandbox, setup, Lightning, and Visualforce Salesforce hostnames.
+- Visible popup errors for session or metadata lookup failures.
 
 ## Command Format
 
@@ -35,9 +37,17 @@ ESD.My Deployment.branding
 ## Supported Salesforce Domains
 
 - `*.salesforce.com`
+- `*.sandbox.salesforce.com`
 - `*.salesforce-setup.com`
+- `*.my.salesforce-setup.com`
+- `*.sandbox.salesforce-setup.com`
+- `*.sandbox.my.salesforce-setup.com`
 - `*.my.salesforce.com`
+- `*.sandbox.my.salesforce.com`
 - `*.lightning.force.com`
+- `*.sandbox.lightning.force.com`
+- `*.vf.force.com`
+- `*.sandbox.vf.force.com`
 
 ## Release Notes
 
@@ -115,6 +125,6 @@ The extension is provided "as is" without warranties. Users are responsible for 
 ---
 
 Last Updated: 04/30/2026  
-Version: 6.0.0
+Version: 8.0.1
 
 © thePhani.com - All Rights Reserved

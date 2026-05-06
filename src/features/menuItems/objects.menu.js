@@ -1,7 +1,7 @@
 export const OBJECTS_MENU_CONFIG = {
 	prefix: 'Objects',
 	queryType: 'REST',
-	query: 'sobjects',
+	query: 'sobjects/',
 	filterKey: ['label', 'apiName'],
 	getItemIdentifier: obj => obj.apiName,
 	renderItem: obj => `

@@ -1,5 +1,23 @@
 # Release Notes
 
+## 8.0.1 - 04/30/2026
+
+### Fixed
+
+- Fixed Objects autocomplete returning no results by correcting the Objects metadata endpoint.
+- Fixed background session retrieval by loading the shared Salesforce domain validator in the service worker.
+- Fixed silent popup failures by making session and metadata lookup errors visible in the UI.
+- Fixed Visualforce hostname handling by mapping Visualforce pages back to the matching Salesforce API hostname.
+
+### Changed
+
+- Expanded Salesforce host permissions for sandbox, setup, Lightning, and Visualforce domains.
+- Improved autocomplete prefix handling so session lookup only runs after a supported command prefix is detected.
+
+### Tests
+
+- Added domain validator coverage for Salesforce hostname validation, API hostname normalization, and cookie lookup candidates.
+
 ## 6.0.0 - 04/30/2026
 
 ### Added

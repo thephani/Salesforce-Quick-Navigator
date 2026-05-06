@@ -1,10 +1,7 @@
-// Comprehensive Background Script for Salesforce Quick Nav
-
-// Domain Validation Utility
-const VALID_DOMAINS = ['.salesforce.com', '.salesforce-setup.com', '.my.salesforce.com', '.lightning.force.com'];
+import DomainValidator from './src/utils/domain-validator.js';
 
 function isValidSalesforceDomain(hostname) {
-	return VALID_DOMAINS.some(domain => hostname.includes(domain));
+	return DomainValidator.isSalesforceHostname(hostname);
 }
 
 // Session Management
@@ -12,13 +9,8 @@ class BackgroundSessionManager {
 	// Cookie-based Session Retrieval
 	static retrieveSessionCookie(sfHost) {
 		return new Promise((resolve, reject) => {
-			// Try multiple domain variations
-			const cookieDomains = [
-				sfHost,
-				sfHost.replace('.lightning.force.com', '.salesforce.com'),
-				sfHost.replace('.my.salesforce-setup.com', '.salesforce.com'),
-				sfHost.replace('.salesforce-setup.com', '.salesforce.com'),
-			];
+			const apiHostname = DomainValidator.getApiHostname(sfHost);
+			const cookieDomains = DomainValidator.getCookieDomainCandidates(sfHost);
 
 			const tryNextDomain = domains => {
 				if (domains.length === 0) {
@@ -26,7 +18,7 @@ class BackgroundSessionManager {
 					return;
 				}
 
-				const currentDomain = domains[0].replace('.lightning.force.com', '.my.salesforce.com');
+				const currentDomain = domains[0];
 				chrome.cookies.get({url: 'https://' + currentDomain, name: 'sid'}, sessionCookie => {
 					if (sessionCookie) {
 						const apiHostname = DomainValidator.getApiHostname(sfHost);
