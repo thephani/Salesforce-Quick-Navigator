@@ -1,4 +1,4 @@
-import test from 'node:test';
+import test, {beforeEach} from 'node:test';
 import assert from 'node:assert/strict';
 
 import HistoryManager from '../src/features/history-manager.js';
@@ -20,6 +20,10 @@ globalThis.chrome = {
     },
   },
 };
+
+beforeEach(() => {
+  storage.clear();
+});
 
 test('HistoryManager stores and retrieves commands correctly', async () => {
   const historyManager = new HistoryManager();
@@ -95,6 +99,60 @@ test('HistoryManager clears history correctly', async () => {
 
   // Verify history is empty
   assert.strictEqual(history.length, 0);
+});
+
+test('HistoryManager pins commands above recent history', async () => {
+  const historyManager = new HistoryManager();
+
+  await historyManager.clearHistory();
+
+  await historyManager.logCommand('Objects.Case.Fields');
+  await historyManager.logCommand('Profiles.Admin.SystemPermissions');
+  await historyManager.togglePinned('Objects.Case.Fields');
+
+  const history = await historyManager.getHistory();
+
+  assert.strictEqual(history.length, 2);
+  assert.strictEqual(history[0].command, 'Objects.Case.Fields');
+  assert.strictEqual(history[0].pinned, true);
+  assert.strictEqual(history[1].command, 'Profiles.Admin.SystemPermissions');
+});
+
+test('HistoryManager keeps pinned commands when clearing recent history', async () => {
+  const historyManager = new HistoryManager();
+
+  await historyManager.clearHistory();
+
+  await historyManager.logCommand('Objects.Case.Fields');
+  await historyManager.logCommand('Profiles.Admin.SystemPermissions');
+  await historyManager.togglePinned('Objects.Case.Fields');
+  await historyManager.clearHistory();
+
+  const history = await historyManager.getHistory();
+
+  assert.strictEqual(history.length, 1);
+  assert.strictEqual(history[0].command, 'Objects.Case.Fields');
+  assert.strictEqual(history[0].pinned, true);
+});
+
+test('HistoryManager history limit trims only unpinned commands', async () => {
+  const historyManager = new HistoryManager();
+
+  await historyManager.clearHistory();
+
+  await historyManager.logCommand('PinnedCommand');
+  await historyManager.togglePinned('PinnedCommand');
+
+  for (let i = 0; i < 25; i++) {
+    await historyManager.logCommand(`Command${i}`);
+  }
+
+  const history = await historyManager.getHistory();
+
+  assert.strictEqual(history.length, 21);
+  assert.strictEqual(history[0].command, 'PinnedCommand');
+  assert.strictEqual(history[0].pinned, true);
+  assert.strictEqual(history.filter((entry) => !entry.pinned).length, 20);
 });
 
 test('UI displays recent commands properly', async () => {

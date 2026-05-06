@@ -303,6 +303,11 @@ body {
 	background: rgba(25, 113, 194, 0.08);
 }
 
+.history-item.is-pinned {
+	border: 1px solid rgba(25, 113, 194, 0.2);
+	background: rgba(25, 113, 194, 0.08);
+}
+
 .history-item-code {
 	flex-grow: 1;
 	overflow: hidden;
@@ -310,9 +315,43 @@ body {
 	white-space: nowrap;
 }
 
+.history-item-meta {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	flex-shrink: 0;
+}
+
 .history-item-count {
 	color: var(--color-muted);
 	font-size: 0.76rem;
+}
+
+.history-pin-button {
+	min-width: 46px;
+	padding: 4px 7px;
+	border: 1px solid rgba(25, 113, 194, 0.16);
+	border-radius: 6px;
+	background: rgba(255, 255, 255, 0.72);
+	color: var(--color-primary);
+	font: inherit;
+	font-size: 0.72rem;
+	font-weight: 700;
+	line-height: 1;
+	cursor: pointer;
+}
+
+.history-pin-button:hover,
+.history-pin-button:focus-visible {
+	border-color: rgba(25, 113, 194, 0.36);
+	background: #fff;
+	outline: none;
+}
+
+.history-pin-button[aria-pressed="true"] {
+	background: var(--color-primary);
+	border-color: var(--color-primary);
+	color: #fff;
 }
 
 .extension-footer {

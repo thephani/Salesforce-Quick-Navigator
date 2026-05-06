@@ -50,6 +50,8 @@
 								<button type="button" class="quick-prefix-button" data-prefix="Flows">Flows</button>
 								<button type="button" class="quick-prefix-button" data-prefix="Apps">Apps</button>
 								<button type="button" class="quick-prefix-button" data-prefix="Labels">Labels</button>
+								<button type="button" class="quick-prefix-button" data-prefix="CustomMetadata">Custom Metadata</button>
+								<button type="button" class="quick-prefix-button" data-prefix="CustomSettings">Custom Settings</button>
 								<button type="button" class="quick-prefix-button" data-prefix="ESD">ESD</button>
 							</div>
 
@@ -111,6 +113,22 @@
 									</ul>
 								</div>
 
+								<div class="guide-group" data-prefix="CustomSettings">
+									<h3>Custom Settings</h3>
+									<ul class="guide-list">
+										<li><code>My Setting__c.definition</code></li>
+										<li><code>My Setting__c.manager</code></li>
+									</ul>
+								</div>
+
+								<div class="guide-group" data-prefix="CustomMetadata">
+									<h3>Custom Metadata</h3>
+									<ul class="guide-list">
+										<li><code>My Metadata__mdt.definition</code></li>
+										<li><code>My Metadata__mdt.manage</code></li>
+									</ul>
+								</div>
+
 								<div class="guide-group" data-prefix="ESD">
 									<h3>ESD</h3>
 									<ul class="guide-list">
@@ -126,10 +144,10 @@
 						<div id="error" class="error-message is-hidden" role="status"></div>
 					</section>
 
-					<section id="historyPanel" class="history-panel is-hidden" aria-labelledby="history-panel-title">
+					<section id="historyPanel" class="history-panel" aria-labelledby="history-panel-title">
 						<div class="panel-header">
 							<h2 id="history-panel-title">Command History</h2>
-							<button id="clearHistoryBtn" class="clear-history-button" type="button" aria-label="Clear history">Clear</button>
+							<button id="clearHistoryBtn" class="clear-history-button" type="button" aria-label="Clear recent history">Clear Recent</button>
 						</div>
 						<ul id="historyList" class="history-list"></ul>
 					</section>
