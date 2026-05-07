@@ -7,6 +7,8 @@
 - Added Custom Settings autocomplete and navigation with a `CustomSettings` command prefix.
 - Added Custom Metadata autocomplete and navigation with a `CustomMetadata` command prefix.
 - Added pinning for command history so favorite commands stay above recent commands.
+- Updated Logo
+- Improved UI and button layouts and clicks
 
 ## 8.0.1 - 04/30/2026
 
