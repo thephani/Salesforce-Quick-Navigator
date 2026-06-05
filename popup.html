@@ -28,7 +28,13 @@
 
 			<div class="container fade-in">
 				<main class="app-main">
-					<section class="command-panel slide-in" aria-labelledby="command-panel-title">
+					<nav class="tab-list" role="tablist" aria-label="Navigator sections">
+						<button id="quickTab" class="tab-button is-active" type="button" role="tab" aria-selected="true" aria-controls="quickPanel" data-tab-target="quickPanel">Quick</button>
+						<button id="pinsTab" class="tab-button" type="button" role="tab" aria-selected="false" aria-controls="pinsPanel" data-tab-target="pinsPanel">Pins</button>
+						<button id="historyTab" class="tab-button" type="button" role="tab" aria-selected="false" aria-controls="historyPanel" data-tab-target="historyPanel">History</button>
+					</nav>
+
+					<section id="quickPanel" class="tab-panel command-panel slide-in" role="tabpanel" aria-labelledby="quickTab">
 						<div class="input-container">
 							<label id="command-panel-title" class="input-label" for="objectInput">Salesforce Quick Navigator</label>
 							<div class="autocomplete-container">
@@ -144,7 +150,14 @@
 						<div id="error" class="error-message is-hidden" role="status"></div>
 					</section>
 
-					<section id="historyPanel" class="history-panel" aria-labelledby="history-panel-title">
+					<section id="pinsPanel" class="tab-panel history-panel is-hidden" role="tabpanel" aria-labelledby="pinsTab">
+						<div class="panel-header">
+							<h2 id="pins-panel-title">Pinned Commands</h2>
+						</div>
+						<ul id="pinsList" class="history-list"></ul>
+					</section>
+
+					<section id="historyPanel" class="tab-panel history-panel is-hidden" role="tabpanel" aria-labelledby="historyTab">
 						<div class="panel-header">
 							<h2 id="history-panel-title">Command History</h2>
 							<button id="clearHistoryBtn" class="clear-history-button" type="button" aria-label="Clear recent history">Clear Recent</button>
@@ -153,9 +166,9 @@
 					</section>
 				</main>
 
-				<footer class="extension-footer">
+				<footer id="quickFooter" class="extension-footer">
 					<div class="footer-content">
-						<div class="copyright">© 2025 apps.thePhani.com</div>
+						<div class="copyright">https://apps.thePhani.com</div>
 						<div class="feedback-link">
 							<a href="https://forms.gle/jajNzrZg9kBRnfuo7" target="_blank" rel="noreferrer" title="Provide Feedback or Report Issues">
 								Feedback & Support

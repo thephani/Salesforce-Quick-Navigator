@@ -27,11 +27,13 @@ document.addEventListener('DOMContentLoaded', async () => {
 			autocompleteManager.handleAutocomplete(e);
 		});
 
+		setupTabs();
+
 		const quickPrefixButtons = document.querySelectorAll('.quick-prefix-button');
 		setupQuickPrefixButtons(quickPrefixButtons, objectInput);
 
 		const historyManager = new HistoryManager();
-		await initializeHistoryPanel(historyManager, objectInput);
+		await initializeCommandLists(historyManager, objectInput);
 
 		const guideCodes = document.querySelectorAll('.guide-list code');
 		setupGuideCodeClickListeners(guideCodes, objectInput, historyManager);
@@ -43,6 +45,52 @@ document.addEventListener('DOMContentLoaded', async () => {
 function setupGuideCodeClickListeners(guideCodes, objectInput, historyManager) {
 	guideCodes.forEach(code => {
 		code.addEventListener('click', () => updateInputWithGuideCode(code, objectInput, historyManager));
+	});
+}
+
+function setupTabs() {
+	const tabButtons = document.querySelectorAll('.tab-button');
+	const tabPanels = document.querySelectorAll('.tab-panel');
+	const quickFooter = document.getElementById('quickFooter');
+
+	const activateTab = button => {
+		const targetId = button.dataset.tabTarget;
+
+		if (!targetId) {
+			return;
+		}
+
+		tabButtons.forEach(tabButton => {
+			const isActive = tabButton === button;
+			tabButton.classList.toggle('is-active', isActive);
+			tabButton.setAttribute('aria-selected', String(isActive));
+			tabButton.setAttribute('tabindex', isActive ? '0' : '-1');
+		});
+
+		tabPanels.forEach(panel => {
+			panel.classList.toggle('is-hidden', panel.id !== targetId);
+		});
+
+		quickFooter?.classList.toggle('is-hidden', targetId !== 'quickPanel');
+	};
+
+	tabButtons.forEach(button => {
+		button.setAttribute('tabindex', button.classList.contains('is-active') ? '0' : '-1');
+		button.addEventListener('click', () => activateTab(button));
+		button.addEventListener('keydown', event => {
+			if (event.key !== 'ArrowLeft' && event.key !== 'ArrowRight') {
+				return;
+			}
+
+			event.preventDefault();
+			const direction = event.key === 'ArrowRight' ? 1 : -1;
+			const currentIndex = Array.from(tabButtons).indexOf(button);
+			const nextIndex = (currentIndex + direction + tabButtons.length) % tabButtons.length;
+			const nextTab = tabButtons[nextIndex];
+
+			nextTab.focus();
+			activateTab(nextTab);
+		});
 	});
 }
 
@@ -84,28 +132,28 @@ function updateActivePrefixButton(inputValue) {
 	});
 }
 
-async function initializeHistoryPanel(historyManager, objectInput) {
-	const historyPanel = document.getElementById('historyPanel');
+async function initializeCommandLists(historyManager, objectInput) {
+	const pinsList = document.getElementById('pinsList');
 	const historyList = document.getElementById('historyList');
 	const clearHistoryBtn = document.getElementById('clearHistoryBtn');
 
-	if (!historyPanel || !historyList || !clearHistoryBtn) {
-		console.error('History panel elements not found');
+	if (!pinsList || !historyList || !clearHistoryBtn) {
+		console.error('Command list elements not found');
 		return;
 	}
 
-	await updateHistoryPanel(historyManager, historyList);
+	await updateCommandLists(historyManager, pinsList, historyList);
 
 	clearHistoryBtn.addEventListener('click', async () => {
 		await historyManager.clearHistory();
-		await updateHistoryPanel(historyManager, historyList);
+		await updateCommandLists(historyManager, pinsList, historyList);
 	});
 
-	historyList.addEventListener('click', async e => {
+	const handleCommandListClick = async e => {
 		const pinButton = e.target.closest('.history-pin-button');
 		if (pinButton?.dataset.command) {
 			await historyManager.togglePinned(pinButton.dataset.command);
-			await updateHistoryPanel(historyManager, historyList);
+			await updateCommandLists(historyManager, pinsList, historyList);
 			return;
 		}
 
@@ -119,7 +167,10 @@ async function initializeHistoryPanel(historyManager, objectInput) {
 		objectInput.value = command;
 		objectInput.focus();
 		await replayHistoryCommand(command, objectInput);
-	});
+	};
+
+	pinsList.addEventListener('click', handleCommandListClick);
+	historyList.addEventListener('click', handleCommandListClick);
 }
 
 async function replayHistoryCommand(command, objectInput) {
@@ -190,12 +241,23 @@ function parseCommand(command) {
 	};
 }
 
-async function updateHistoryPanel(historyManager, historyList) {
+async function updateCommandLists(historyManager, pinsList, historyList) {
 	const history = await historyManager.getHistory();
+	const pinnedCommands = history.filter(item => item.pinned);
+	const recentCommands = history.filter(item => !item.pinned);
+
+	renderCommandList(pinsList, pinnedCommands, 'No pinned commands yet.');
+	renderCommandList(historyList, recentCommands, 'No recent commands yet.');
+}
+
+function renderCommandList(historyList, history, emptyMessage) {
 	historyList.innerHTML = '';
 
 	if (history.length === 0) {
-		historyList.innerHTML = '<li class="history-empty">No commands yet. Run or choose a command to pin it here.</li>';
+		const emptyItem = document.createElement('li');
+		emptyItem.className = 'history-empty';
+		emptyItem.textContent = emptyMessage;
+		historyList.appendChild(emptyItem);
 		return;
 	}
 
@@ -241,8 +303,9 @@ async function updateInputWithGuideCode(codeElement, objectInput, historyManager
 
 	await historyManager.logCommand(command);
 
+	const pinsList = document.getElementById('pinsList');
 	const historyList = document.getElementById('historyList');
-	if (historyList) {
-		await updateHistoryPanel(historyManager, historyList);
+	if (pinsList && historyList) {
+		await updateCommandLists(historyManager, pinsList, historyList);
 	}
 }
