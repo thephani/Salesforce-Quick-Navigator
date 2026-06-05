@@ -23,18 +23,18 @@ class NavigatorService {
 		}, config.errorMessage || 'Error querying metadata');
 	}
 
-	static async navigateToItem(item, action, urlConfig, prefix) {
+	static async navigateToItem(item, action, urlConfig, prefix, getItemIdentifier = value => value) {
 		console.log('Navigating to item:', item, action);
 
 		try {
 			const session = await SessionManager.retrieveSession();
 			const navigateUrl = urlConfig(session, item, action);
+			const historyManager = new HistoryManager();
+			const command = `${prefix}.${getItemIdentifier(item)}.${action}`;
+
+			await historyManager.logCommand(command);
 
 			chrome.tabs.create({url: navigateUrl});
-
-			const historyManager = new HistoryManager();
-			const command = `${prefix}.${item}.${action}`;
-			await historyManager.logCommand(command);
 		} catch (error) {
 			ErrorHandler.handle(error, 'Navigation Error');
 		}
@@ -47,7 +47,8 @@ class NavigatorService {
 			renderItem: config.renderItem,
 			getItemIdentifier: config.getItemIdentifier,
 			renderActions: (item, dropdown, input) => NavigatorService.renderItemActions(item, dropdown, input, config),
-			navigate: (item, action) => NavigatorService.navigateToItem(item, action, config.urlConfig, config.prefix),
+			navigate: (item, action) =>
+				NavigatorService.navigateToItem(item, action, config.urlConfig, config.prefix, config.getItemIdentifier),
 		};
 
 		renderSuggestions(items, dropdownElement, inputElement, fullConfig);
@@ -58,7 +59,8 @@ class NavigatorService {
 			prefix: config.prefix,
 			getItemIdentifier: config.getItemIdentifier,
 			actionTerm,
-			navigate: (item, action) => NavigatorService.navigateToItem(item, action, config.urlConfig, config.prefix),
+			navigate: (item, action) =>
+				NavigatorService.navigateToItem(item, action, config.urlConfig, config.prefix, config.getItemIdentifier),
 		};
 
 		renderActions(item, dropdownElement, inputElement, config.actions, actionConfig);
