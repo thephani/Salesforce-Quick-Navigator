@@ -1,5 +1,13 @@
 # Release Notes
 
+## 8.2.1 - 06/16/2026
+
+### Added
+
+- Added searchable Business Hours navigation with a `BusinessHours` command prefix.
+- Added `view` and `edit` actions for Business Hours records.
+- Added a Business Hours quick prefix button and guide examples.
+
 ## 8.1.1 - 05/06/2026
 
 ### Added

@@ -4,7 +4,7 @@ Salesforce Quick Navigator is a Chrome extension for jumping directly to Salesfo
 
 ## Features
 
-- Command prefixes for Objects, Profiles, Permission Sets, Flows, Apps, Labels, Custom Metadata, Custom Settings, and Embedded Service Deployments.
+- Command prefixes for Objects, Profiles, Permission Sets, Business Hours, Flows, Apps, Labels, Custom Metadata, Custom Settings, and Embedded Service Deployments.
 - Autocomplete suggestions for matching metadata records.
 - Keyboard navigation in autocomplete results with Arrow Up, Arrow Down, and Enter.
 - A visible cursor on the active autocomplete option.
@@ -28,6 +28,8 @@ Examples:
 Objects.Case.Fields
 Profiles.System Administrator.SystemPermissions
 PermSets.MyPermSet.assign users
+BusinessHours.Default.view
+BusinessHours.Default.edit
 Flows.Case Routing.builder
 Apps.My Connected App.view
 Labels.My Label.edit
@@ -126,7 +128,7 @@ The extension is provided "as is" without warranties. Users are responsible for 
 
 ---
 
-Last Updated: 05/06/2026  
-Version: 8.1.1
+Last Updated: 06/16/2026  
+Version: 8.2.1
 
 © thePhani.com - All Rights Reserved
